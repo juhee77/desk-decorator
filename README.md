@@ -2,6 +2,14 @@
 
 일본 시티팝 감성의 감성적인 책상 꾸미기 게임입니다.
 
+## 🎮 플레이하기
+
+**👉 [지금 바로 플레이하기!](https://juhee77.github.io/desk-decorator/)**
+
+[![Desk Decorator](https://img.shields.io/badge/Play-Desk%20Decorator-FF69B4?style=for-the-badge&logo=github)](https://juhee77.github.io/desk-decorator/)
+
+---
+
 ## ✨ 기능
 
 - 드래그 앤 드롭으로 아이템 배치
