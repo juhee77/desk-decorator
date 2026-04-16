@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>책상 꾸미기 🌸 Desk Decorator</title>
-    <meta name="description" content="나만의 감성 책상을 꾸며보세요! 드래그 앤 드롭으로 아이템을 배치하고 스크린샷을 저장할 수 있습니다.">
+    <title>책상 꾸미기 🌸 나만의 감성 공간</title>
+    <meta name="description" content="나만의 감성 책상을 꾸며보세요! 드래그 앤 드롭으로 아이템을 배치하고, 저장하고, 공유하세요.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -16,178 +16,130 @@
 </head>
 
 <body>
+    <!-- 토스트 알림 -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <div class="container">
         <header class="header">
             <h1 class="title">
-                <span class="emoji">🌸</span>
+                <span class="title-icon">🌸</span>
                 나만의 책상 꾸미기
-                <span class="emoji">💫</span>
             </h1>
             <p class="subtitle">감성 가득한 나만의 공간을 만들어보세요 ✨</p>
+
+            <!-- 테마 선택 -->
+            <div class="theme-selector">
+                <button class="theme-btn active" data-theme="sunset" id="themeSunset" title="노을">
+                    <span>🌅</span> 노을
+                </button>
+                <button class="theme-btn" data-theme="night" id="themeNight" title="야경">
+                    <span>🌙</span> 야경
+                </button>
+                <button class="theme-btn" data-theme="forest" id="themeForest" title="숲">
+                    <span>🌿</span> 숲
+                </button>
+                <button class="theme-btn" data-theme="ocean" id="themeOcean" title="바다">
+                    <span>🌊</span> 바다
+                </button>
+            </div>
         </header>
 
         <div class="main-content">
+            <!-- 모바일 탭 -->
+            <div class="mobile-tabs" id="mobileTabs">
+                <button class="tab-btn active" data-tab="palette" id="tabPalette">
+                    <i class="fas fa-th"></i> 아이템
+                </button>
+                <button class="tab-btn" data-tab="desk" id="tabDesk">
+                    <i class="fas fa-desktop"></i> 내 책상
+                </button>
+            </div>
+
             <!-- 아이템 팔레트 -->
-            <aside class="palette">
-                <h2 class="palette-title">아이템</h2>
+            <aside class="palette" id="palettePanel">
+                <h2 class="palette-title">
+                    <i class="fas fa-magic"></i> 아이템 팔레트
+                </h2>
 
-                <div class="category">
-                    <h3 class="category-title"><i class="fas fa-book"></i> 학용품</h3>
-                    <div class="items-grid">
-                        <div class="item" draggable="true" data-item="laptop" data-color="#6c63ff" data-type="emoji"
-                            data-content="💻">
-                            <span class="item-content">💻</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="book" data-color="#ff6b9d" data-type="emoji"
-                            data-content="📚">
-                            <span class="item-content">📚</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="notebook" data-color="#ffa07a" data-type="emoji"
-                            data-content="📓">
-                            <span class="item-content">📓</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="pencil" data-color="#ffd93d" data-type="emoji"
-                            data-content="✏️">
-                            <span class="item-content">✏️</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="pen" data-color="#4ecdc4" data-type="emoji"
-                            data-content="🖊️">
-                            <span class="item-content">🖊️</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="ruler" data-color="#95e1d3" data-type="emoji"
-                            data-content="📏">
-                            <span class="item-content">📏</span>
-                        </div>
-                    </div>
+                <!-- 카테고리 탭 -->
+                <div class="category-tabs">
+                    <button class="cat-tab active" data-cat="study">
+                        <i class="fas fa-book"></i><span>학용품</span>
+                    </button>
+                    <button class="cat-tab" data-cat="plants">
+                        <i class="fas fa-leaf"></i><span>식물</span>
+                    </button>
+                    <button class="cat-tab" data-cat="deco">
+                        <i class="fas fa-star"></i><span>장식</span>
+                    </button>
+                    <button class="cat-tab" data-cat="drinks">
+                        <i class="fas fa-mug-hot"></i><span>음료</span>
+                    </button>
+                    <button class="cat-tab" data-cat="hobby">
+                        <i class="fas fa-palette"></i><span>취미</span>
+                    </button>
                 </div>
 
-                <div class="category">
-                    <h3 class="category-title"><i class="fas fa-leaf"></i> 식물 & 장식</h3>
-                    <div class="items-grid">
-                        <div class="item" draggable="true" data-item="plant1" data-color="#7bed9f" data-type="emoji"
-                            data-content="🌱">
-                            <span class="item-content">🌱</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="plant2" data-color="#2ed573" data-type="emoji"
-                            data-content="🌿">
-                            <span class="item-content">🌿</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="cactus" data-color="#26de81" data-type="emoji"
-                            data-content="🌵">
-                            <span class="item-content">🌵</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="flower" data-color="#ff6b9d" data-type="emoji"
-                            data-content="🌸">
-                            <span class="item-content">🌸</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="lamp" data-color="#fed330" data-type="emoji"
-                            data-content="💡">
-                            <span class="item-content">💡</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="candle" data-color="#fd79a8" data-type="emoji"
-                            data-content="🕯️">
-                            <span class="item-content">🕯️</span>
-                        </div>
-                    </div>
-                </div>
+                <!-- 아이템 그리드 (JS로 렌더링) -->
+                <div class="items-grid" id="itemsGrid"></div>
 
-                <div class="category">
-                    <h3 class="category-title"><i class="fas fa-mug-hot"></i> 음료 & 간식</h3>
-                    <div class="items-grid">
-                        <div class="item" draggable="true" data-item="coffee" data-color="#a0522d" data-type="emoji"
-                            data-content="☕">
-                            <span class="item-content">☕</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="tea" data-color="#7bed9f" data-type="emoji"
-                            data-content="🍵">
-                            <span class="item-content">🍵</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="juice" data-color="#ff9ff3" data-type="emoji"
-                            data-content="🧃">
-                            <span class="item-content">🧃</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="cookie" data-color="#d4a574" data-type="emoji"
-                            data-content="🍪">
-                            <span class="item-content">🍪</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="cake" data-color="#ffa8b8" data-type="emoji"
-                            data-content="🍰">
-                            <span class="item-content">🍰</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="donut" data-color="#ff6348" data-type="emoji"
-                            data-content="🍩">
-                            <span class="item-content">🍩</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="category">
-                    <h3 class="category-title"><i class="fas fa-palette"></i> 취미 & 기타</h3>
-                    <div class="items-grid">
-                        <div class="item" draggable="true" data-item="camera" data-color="#535c68" data-type="emoji"
-                            data-content="📷">
-                            <span class="item-content">📷</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="headphone" data-color="#9d4edd" data-type="emoji"
-                            data-content="🎧">
-                            <span class="item-content">🎧</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="game" data-color="#6c5ce7" data-type="emoji"
-                            data-content="🎮">
-                            <span class="item-content">🎮</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="art" data-color="#ff6b9d" data-type="emoji"
-                            data-content="🎨">
-                            <span class="item-content">🎨</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="clock" data-color="#ff6348" data-type="emoji"
-                            data-content="⏰">
-                            <span class="item-content">⏰</span>
-                        </div>
-                        <div class="item" draggable="true" data-item="photo" data-color="#ffa502" data-type="emoji"
-                            data-content="🖼️">
-                            <span class="item-content">🖼️</span>
-                        </div>
-                    </div>
+                <!-- 팔레트 하단 힌트 -->
+                <div class="palette-hint">
+                    <i class="fas fa-hand-pointer"></i> 클릭 또는 드래그로 배치
                 </div>
             </aside>
 
             <!-- 책상 영역 -->
-            <main class="desk-area">
+            <main class="desk-area" id="deskPanel">
                 <div class="desk-container" id="deskContainer">
-                    <div class="desk-surface">
-                        <div class="desk-hint">
-                            <p>👈 왼쪽에서 아이템을 드래그해서 책상에 놓아보세요!</p>
-                            <p class="hint-small">아이템을 더블클릭하면 삭제됩니다</p>
+                    <div class="desk-surface" id="deskSurface">
+                        <div class="desk-hint" id="deskHint">
+                            <div class="hint-icon">✨</div>
+                            <p>아이템을 드래그하거나 클릭해서 배치해봐!</p>
+                            <p class="hint-small">배치된 아이템은 자동으로 저장돼요 💾</p>
                         </div>
                     </div>
                 </div>
 
+                <!-- 컨트롤 버튼 -->
                 <div class="controls">
-                    <button class="btn btn-clear" id="clearBtn">
-                        <span>🗑️</span>
-                        전체 삭제
-                    </button>
                     <button class="btn btn-save" id="saveBtn">
-                        <span>📸</span>
-                        스크린샷 저장
+                        <i class="fas fa-camera"></i>
+                        <span>스크린샷</span>
                     </button>
                     <button class="btn btn-random" id="randomBtn">
-                        <span>🎲</span>
-                        랜덤 배치
+                        <i class="fas fa-dice"></i>
+                        <span>랜덤 배치</span>
+                    </button>
+                    <button class="btn btn-clear" id="clearBtn">
+                        <i class="fas fa-trash"></i>
+                        <span>전체 삭제</span>
                     </button>
                 </div>
 
+                <!-- 통계 -->
                 <div class="stats">
                     <div class="stat-item">
-                        <span class="stat-label">배치된 아이템</span>
+                        <span class="stat-label"><i class="fas fa-layer-group"></i> 배치된 아이템</span>
                         <span class="stat-value" id="itemCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label"><i class="fas fa-save"></i> 마지막 저장</span>
+                        <span class="stat-value stat-time" id="lastSaved">—</span>
                     </div>
                 </div>
             </main>
         </div>
     </div>
 
+    <!-- 아이템 크기 조절 툴킷 (선택된 아이템에 표시) -->
+    <div class="item-toolkit" id="itemToolkit">
+        <button class="toolkit-btn" id="scaleUp" title="크게"><i class="fas fa-plus"></i></button>
+        <button class="toolkit-btn" id="scaleDown" title="작게"><i class="fas fa-minus"></i></button>
+        <button class="toolkit-btn danger" id="deleteItem" title="삭제"><i class="fas fa-times"></i></button>
+    </div>
+
+    <script src="items-config.js"></script>
     <script src="script.js"></script>
 </body>
 
