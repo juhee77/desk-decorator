@@ -22,7 +22,7 @@
     --border-radius: 20px;
     --border-radius-sm: 12px;
     --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    --palette-width: 300px;
+    --palette-width: 320px;
 }
 
 /* ========================
@@ -353,13 +353,15 @@ body {
     box-shadow: 0 2px 10px rgba(255, 183, 213, 0.4);
 }
 
-/* Items Grid */
 .items-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: max-content;
     gap: 0.6rem;
     overflow-y: auto;
     flex: 1;
+    min-height: 0;
+    align-content: start;
     padding-right: 2px; /* for scrollbar */
 }
 
@@ -385,6 +387,7 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 0.25rem;
+    min-width: 0;
 }
 
 .item:active { cursor: grabbing; }
@@ -1217,7 +1220,7 @@ body {
     }
 
     .items-grid {
-        grid-template-columns: repeat(6, 1fr);
+        grid-template-columns: repeat(6, minmax(0, 1fr));
         max-height: 200px;
     }
 
@@ -1249,7 +1252,7 @@ body {
     .desk-area.active { display: flex; }
 
     .items-grid {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         max-height: none;
     }
 
