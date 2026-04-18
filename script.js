@@ -513,13 +513,79 @@ function checkChallenge() {
 }
 
 // ── V3 Features: 취향 분석 ─────────────────────────
+// ── V3 Features: 취향 분석 (Psychological Assessment) ─────────────────────────
 analyzeBtn.addEventListener('click', () => {
     const itemsDOM = deskSurface.querySelectorAll('.placed-item');
     if(itemsDOM.length < 5) {
-        showToast('아이템을 5개 이상 배치해야 분석이 가능해요!', 'info');
+        showToast('정확한 심리 분석을 위해 최소 5개 이상의 오브젝트 배치가 필요합니다.', 'info');
         return;
     }
+
+    resultOverlay.classList.add('active');
+    const loadingScreen = document.getElementById('analysisLoading');
+    const loadingText = document.getElementById('loadingText');
     
+    loadingScreen.classList.add('active');
+    resultCard.style.display = 'none';
+    
+    // Reset and start typewriter effect
+    loadingText.innerHTML = '>> SYSTEM BOOT...<br/>';
+    const steps = [
+        ">> CALIBRATING SURROUNDINGS...",
+        ">> ANALYZING SPATIAL DENSITY...",
+        ">> CALCULATING CLUSTER VARIANCES [x, y]...",
+        ">> MAPPING TO BIG-FIVE ARCHETYPES...",
+        ">> DIAGNOSIS COMPLETE."
+    ];
+    
+    let stepIdx = 0;
+    const loadInt = setInterval(() => {
+        if(stepIdx < steps.length) {
+            loadingText.innerHTML += steps[stepIdx] + '<br/>';
+            stepIdx++;
+        } else {
+            clearInterval(loadInt);
+            loadingText.innerHTML += '<span class="loading-cursor"></span>';
+            setTimeout(() => {
+                loadingScreen.classList.remove('active');
+                resultCard.style.display = 'flex';
+                generateDiagnosticReport(itemsDOM);
+            }, 800);
+        }
+    }, 500);
+});
+
+function generateDiagnosticReport(itemsDOM) {
+    // 1. Spatial Analysis (Positions)
+    let sumX = 0, sumY = 0;
+    const coords = [];
+    itemsDOM.forEach(el => {
+        const x = parseFloat(el.style.left || 0);
+        const y = parseFloat(el.style.top || 0);
+        coords.push({x, y});
+        sumX += x; sumY += y;
+    });
+    
+    const count = coords.length;
+    const meanX = sumX / count;
+    const meanY = sumY / count;
+    
+    let varX = 0, varY = 0;
+    coords.forEach(c => {
+        varX += Math.pow(c.x - meanX, 2);
+        varY += Math.pow(c.y - meanY, 2);
+    });
+    // Standard deviation as a metric of scattering
+    const stdDev = Math.sqrt((varX + varY) / count);
+    
+    const isSpread = stdDev > 180;
+    const spatialLabel = isSpread ? "확장 분산형 (Broad Workspace)" : "중앙 집중형 (Centered Focus)";
+    
+    // 2. Density Analysis
+    const isMaximalist = count >= 15;
+    const densityLabel = isMaximalist ? "맥시멀리즘 (High Cognitive Load Capacity)" : "미니멀리즘 (Controlled Environment)";
+    
+    // 3. Category Dominance (Big Five Mapping)
     const counts = {
         study: countCat(itemsDOM, 'study'),
         plants: countCat(itemsDOM, 'plants'),
@@ -535,32 +601,77 @@ analyzeBtn.addEventListener('click', () => {
     }
     
     const profiles = {
-        study: { icon: '🎓', title: '집중력 만렙 학구파', desc: '펜과 노트가 항상 준비된 워커홀릭! 오늘 할 일을 내일로 미루지 않는 꼼꼼한 성격의 소유자네요.' },
-        plants: { icon: '🪴', title: '힐링이 필요한 식물집사', desc: '책상 위 작은 숲을 가꾸며 마음에 안정을 찾는 타입. 자연을 사랑하고 차분한 무드를 즐겨요.' },
-        deco: { icon: '✨', title: '갬성 충만 데코레이터', desc: '아무리 바빠도 예쁜 건 참을 수 없어! 반짝이는 조명과 소품들로 나만의 아늑한 세계를 만들었어요.' },
-        drinks: { icon: '☕', title: '카페인 중독 홈카페장인', desc: '일/공부의 시작은 맛있는 음료부터. 커피나 디저트 없이는 책상에 앉지 않는 진정한 미식가네요!' },
-        hobby: { icon: '🎧', title: '노는게 젤 좋아 취미부자', desc: '음악, 게임, 취미 생활이 인생의 원동력. 일할 땐 일하고 놀 땐 확실히 노는 쿨한 마인드예요.' }
+        study: { 
+            title: '조율된 완벽주의자', 
+            trait: '성실성 (Conscientiousness) 최상',
+            expert: '통제된 환경에서 최상의 성과를 내는 날카로운 집중력의 소유자입니다. 목표 지향적이며 체계적인 사고를 선호합니다.' 
+        },
+        plants: { 
+            title: '자연 친화적 몽상가', 
+            trait: '개방성 (Openness) 최상',
+            expert: '정형화된 틀을 깨고 초록의 생명력에서 시각적 영감을 얻습니다. 일상 속 변주를 즐기는 창의적 마인드가 돋보이네요.' 
+        },
+        deco: { 
+            title: '공간 창조형 아티스트', 
+            trait: '미적 감각 (Aesthetics) 극대화',
+            expert: '아무리 바빠도 환경의 미학은 포기할 수 없습니다. 자기표현 욕구가 강하고 디테일한 센스가 뛰어납니다.' 
+        },
+        drinks: { 
+            title: '소셜 커넥터 & 미식가', 
+            trait: '외향/친화성 (Extraversion) 우세',
+            expert: '루틴 속에 작은 보상을 배치함으로써 에너지를 얻는 타입입니다. 여유와 소통을 소중히 여기는 긍정적인 활동가네요.' 
+        },
+        hobby: { 
+            title: '안전기지 구축가', 
+            trait: '안정 추구 (Comfort Seeking)',
+            expert: '치열한 일상 속, 책상을 온전한 나만의 도피처(Safe Haven)로 조형했습니다. 현재 멘탈 케어와 심리적 환기가 필요할 수도 있습니다.' 
+        }
     };
     
     const profile = profiles[maxCat];
+    const themeStr = document.querySelector('.theme-btn.active').textContent.trim();
+    const dateStr = new Date().toISOString().split('T')[0];
     
     resultCard.innerHTML = `
-        <div class="rc-stamp">DESK DECORATOR</div>
-        <div class="rc-icon">${profile.icon}</div>
-        <div class="rc-subtitle">나만의 책상 취향 결과는...</div>
+        <div class="rc-stamp">CONFIDENTIAL</div>
+        <div class="rc-header">
+            <div class="rc-doc-tit">PSYCHOLOGICAL SPACE ASSESSMENT</div>
+            <div style="font-size:0.75rem; color:#666;">Date: ${dateStr}</div>
+        </div>
+        <div class="rc-subtitle">Primary Archetype</div>
         <div class="rc-title">${profile.title}</div>
-        <div class="rc-desc">${profile.desc}</div>
+        
+        <div class="rc-grid">
+            <div class="rc-stat"><span>DOMINANCE</span>${profile.trait}</div>
+            <div class="rc-stat"><span>SPATIAL</span>${spatialLabel}</div>
+            <div class="rc-stat"><span>DENSITY</span>${densityLabel}</div>
+            <div class="rc-stat"><span>ENVIRONMENT</span>Theme: ${themeStr}</div>
+        </div>
+        
+        <div class="rc-desc">
+            <strong>Behavioral Analysis:</strong> 피험자의 데스크톱 환경은 총 ${count}개의 시각적 객체로 구성되어 있으며, 
+            좌표 편차(σ=${Math.round(stdDev)})에 따른 공간 분포 패턴과 밀집도를 보여줍니다.
+        </div>
+        
+        <div class="rc-expert">
+            " ${profile.expert} "
+        </div>
+        
         <div class="rc-footer">
-            배치한 아이템: ${itemsDOM.length}개<br>가장 선호하는 테마: ${document.querySelector('.theme-btn.active').textContent.trim()}
+            <div>Dept. of Spatial Psychology</div>
+            <div>Auth: Dr. Desk Decorator</div>
         </div>
     `;
     
-    resultOverlay.classList.add('active');
     state.hasAnalyzed = true;
-});
+}
 
 resultClose.addEventListener('click', () => {
     resultOverlay.classList.remove('active');
+    // Stop loading just in case closed early
+    const loadingScreen = document.getElementById('analysisLoading');
+    loadingScreen.classList.remove('active');
+    document.getElementById('loadingText').innerHTML = '';
 });
 
 resultSaveBtn.addEventListener('click', async () => {
