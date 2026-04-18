@@ -770,6 +770,438 @@ body {
 }
 
 /* ========================
+   MUSIC WIDGET (Lofi BGM)
+======================== */
+.music-widget {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    z-index: 100;
+}
+
+.music-fab {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid rgba(255, 183, 213, 0.5);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    z-index: 2;
+}
+
+.music-fab:hover {
+    transform: scale(1.05);
+    border-color: var(--accent-purple);
+}
+
+.music-fab.playing {
+    animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 0 0 rgba(201, 160, 220, 0.4); }
+    70% { box-shadow: 0 0 0 15px rgba(201, 160, 220, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(201, 160, 220, 0); }
+}
+
+.music-fab-icon {
+    font-size: 1.5rem;
+    transition: transform 0.3s;
+}
+
+.music-fab.playing .music-fab-icon {
+    animation: wiggle 2s infinite;
+}
+
+.music-panel {
+    position: absolute;
+    bottom: 75px;
+    left: 0;
+    width: 280px;
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    box-shadow: var(--shadow-lg);
+    border: 1.5px solid rgba(255, 183, 213, 0.3);
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    pointer-events: none;
+    transition: var(--transition);
+    transform-origin: bottom left;
+}
+
+.music-widget:hover .music-panel,
+.music-panel.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.music-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.vinyl {
+    width: 50px;
+    height: 50px;
+    background: #111;
+    border-radius: 50%;
+    border: 2px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 4px rgba(255,255,255,0.2);
+}
+
+.vinyl.spinning {
+    animation: spin 3s linear infinite;
+}
+
+.vinyl-inner {
+    width: 20px;
+    height: 20px;
+    background: var(--accent-pink);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vinyl-dot {
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 50%;
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+.music-meta {
+    flex: 1;
+}
+
+.music-track {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.music-sub {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.music-close-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.4rem;
+}
+
+.music-controls-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(0,0,0,0.03);
+    padding: 0.6rem;
+    border-radius: 50px;
+}
+
+.music-play-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s;
+}
+
+.music-play-btn:hover {
+    transform: scale(1.1);
+}
+
+.music-vol-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.music-vol-slider {
+    flex: 1;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(201, 160, 220, 0.3);
+    border-radius: 2px;
+    outline: none;
+}
+
+.music-vol-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent-purple);
+    cursor: pointer;
+}
+
+/* ========================
+   DAILY CHALLENGE WIDGET
+======================== */
+.challenge-widget {
+    background: var(--bg-card);
+    border-radius: var(--border-radius-sm);
+    padding: 1rem;
+    box-shadow: var(--shadow-sm);
+    border: 1.5px solid rgba(255, 183, 213, 0.3);
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.challenge-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    position: relative;
+    z-index: 2;
+}
+
+.challenge-emoji {
+    font-size: 2rem;
+}
+
+.challenge-body {
+    flex: 1;
+}
+
+.challenge-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--accent-purple);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.2rem;
+}
+
+.challenge-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.challenge-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.challenge-right {
+    text-align: right;
+    min-width: 60px;
+}
+
+.challenge-count {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.3rem;
+}
+
+.challenge-track {
+    height: 6px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.challenge-fill {
+    height: 100%;
+    background: var(--primary-gradient);
+    transition: width 0.4s ease;
+}
+
+.challenge-done {
+    position: absolute;
+    inset: 0;
+    background: var(--primary-gradient);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    z-index: 3;
+}
+
+.challenge-widget.completed .challenge-done {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ========================
+   RESULT MODAL
+======================== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.result-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    transform: translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-overlay.active .result-wrap {
+    transform: translateY(0);
+}
+
+.result-close-btn {
+    position: absolute;
+    top: -40px;
+    right: -20px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.result-card {
+    background: white;
+    border-radius: 24px;
+    padding: 2rem;
+    width: 320px;
+    min-height: 480px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.result-card::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%; right: -50%; bottom: -50%;
+    background: radial-gradient(circle at center, rgba(255, 183, 213, 0.2) 0%, transparent 60%);
+    animation: rotateBg 10s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes rotateBg { 100% { transform: rotate(360deg); } }
+
+.rc-stamp {
+    position: absolute;
+    top: 20px; right: 20px;
+    font-size: 0.7rem; color: #ccc;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.rc-icon {
+    font-size: 4rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+}
+
+.rc-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    position: relative; z-index: 1;
+}
+
+.rc-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    position: relative; z-index: 1;
+}
+
+.rc-desc {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    background: rgba(240, 240, 250, 0.6);
+    padding: 1rem;
+    border-radius: 12px;
+    position: relative; z-index: 1;
+}
+
+.rc-footer {
+    margin-top: auto;
+    font-size: 0.7rem;
+    color: #bbb;
+    position: relative; z-index: 1;
+    padding-top: 2rem;
+}
+
+.result-save-btn {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 50px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 183, 213, 0.4);
+    transition: transform 0.2s;
+}
+
+.result-save-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* ========================
    RESPONSIVE — Tablet (≤900px)
 ======================== */
 @media (max-width: 900px) {

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- desk-decorator v3 -->
 <html lang="ko">
 
 <head>
@@ -101,6 +102,23 @@
                     </div>
                 </div>
 
+                <!-- 데일리 챌린지 -->
+                <div class="challenge-widget" id="challengeWidget">
+                    <div class="challenge-inner">
+                        <span class="challenge-emoji" id="challengeEmoji">🎯</span>
+                        <div class="challenge-body">
+                            <div class="challenge-label">오늘의 챌린지</div>
+                            <div class="challenge-title" id="challengeTitle">집중 모드</div>
+                            <div class="challenge-desc" id="challengeDesc">로딩 중...</div>
+                        </div>
+                        <div class="challenge-right">
+                            <div class="challenge-count" id="challengeCount">0/5</div>
+                            <div class="challenge-track"><div class="challenge-fill" id="challengeFill" style="width:0%"></div></div>
+                        </div>
+                    </div>
+                    <div class="challenge-done" id="challengeDone">🎉 챌린지 완료! 오늘도 최고예요!</div>
+                </div>
+
                 <!-- 컨트롤 버튼 -->
                 <div class="controls">
                     <button class="btn btn-save" id="saveBtn">
@@ -110,6 +128,10 @@
                     <button class="btn btn-random" id="randomBtn">
                         <i class="fas fa-dice"></i>
                         <span>랜덤 배치</span>
+                    </button>
+                    <button class="btn btn-analyze" id="analyzeBtn">
+                        <i class="fas fa-magic"></i>
+                        <span>취향 분석</span>
                     </button>
                     <button class="btn btn-clear" id="clearBtn">
                         <i class="fas fa-trash"></i>
@@ -137,6 +159,40 @@
         <button class="toolkit-btn" id="scaleUp" title="크게"><i class="fas fa-plus"></i></button>
         <button class="toolkit-btn" id="scaleDown" title="작게"><i class="fas fa-minus"></i></button>
         <button class="toolkit-btn danger" id="deleteItem" title="삭제"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- 🎵 음악 위젯 -->
+    <div class="music-widget" id="musicWidget">
+        <button class="music-fab" id="musicFab" title="Lofi BGM">
+            <span class="music-fab-icon" id="musicFabIcon">🎵</span>
+        </button>
+        <div class="music-panel" id="musicPanel">
+            <div class="music-panel-header">
+                <div class="vinyl" id="vinyl"><div class="vinyl-inner"><div class="vinyl-dot"></div></div></div>
+                <div class="music-meta">
+                    <div class="music-track" id="musicTrack">Lofi Chill</div>
+                    <div class="music-sub">beats to study / relax</div>
+                </div>
+                <button class="music-close-btn" id="musicCloseBtn"><i class="fas fa-chevron-down"></i></button>
+            </div>
+            <div class="music-controls-row">
+                <button class="music-play-btn" id="musicPlayBtn"><i class="fas fa-play" id="musicPlayIcon"></i></button>
+                <div class="music-vol-row">
+                    <i class="fas fa-volume-up" style="font-size:.75rem;opacity:.6"></i>
+                    <input type="range" class="music-vol-slider" id="musicVol" min="0" max="100" value="60">
+                </div>
+            </div>
+            <div id="ytPlayerWrap" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;"></div>
+        </div>
+    </div>
+
+    <!-- 🔮 취향 분석 모달 -->
+    <div class="modal-overlay" id="resultOverlay">
+        <div class="result-wrap">
+            <button class="result-close-btn" id="resultClose"><i class="fas fa-times"></i></button>
+            <div class="result-card" id="resultCard"></div>
+            <button class="result-save-btn" id="resultSaveBtn"><i class="fas fa-download"></i> 카드 저장</button>
+        </div>
     </div>
 
     <script src="items-config.js"></script>
