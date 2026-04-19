@@ -642,7 +642,7 @@ body::before {
     gap: 0.3rem;
     background: var(--bg-card);
     backdrop-filter: blur(12px);
-    border: 1.5px solid rgba(255, 183, 213, 0.3);
+    border: 1.5px solid var(--accent-purple);
     border-radius: 50px;
     padding: 0.4rem 0.6rem;
     box-shadow: var(--shadow-md);
@@ -999,7 +999,8 @@ body::before {
 .ambient-mixer {
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px dashed rgba(201, 160, 220, 0.4);
+    border-top: 1px dashed var(--accent-purple);
+    opacity: 0.6;
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
@@ -1048,9 +1049,9 @@ body::before {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: white;
-    border: none;
-    box-shadow: 0 4px 15px rgba(255, 99, 72, 0.3);
+    background: var(--bg-card);
+    border: 1px solid var(--accent-purple);
+    box-shadow: var(--shadow-md);
     cursor: pointer;
     position: relative;
     z-index: 2;
@@ -1070,7 +1071,7 @@ body::before {
     border-radius: 20px;
     padding: 1.2rem;
     box-shadow: var(--shadow-lg);
-    border: 1px solid rgba(255, 99, 72, 0.2);
+    border: 1.5px solid var(--accent-purple);
     position: absolute;
     bottom: 60px;
     right: 0;
@@ -1108,7 +1109,7 @@ body::before {
 .timer-display {
     font-size: 3rem;
     font-weight: 800;
-    color: #ff6348;
+    color: var(--accent-purple);
     text-align: center;
     font-variant-numeric: tabular-nums;
     margin: 1rem 0;
@@ -1122,7 +1123,7 @@ body::before {
 }
 
 .timer-play-btn, .timer-reset-btn {
-    background: #ff6348;
+    background: var(--accent-purple);
     color: white;
     border: none;
     width: 40px; height: 40px;
@@ -1132,7 +1133,7 @@ body::before {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 10px rgba(255, 99, 72, 0.3);
+    box-shadow: var(--shadow-sm);
     transition: transform 0.2s;
 }
 

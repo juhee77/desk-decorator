@@ -302,7 +302,8 @@ function placeItem(content, x, y, name = '', initialText = '') {
         }
         el.appendChild(textDiv);
 
-        el.addEventListener('click', () => {
+        el.addEventListener('click', (e) => {
+            e.stopPropagation();
             if (state.clickPlaceMode) return;
             openNoteEditor(id);
         });
@@ -319,7 +320,8 @@ function placeItem(content, x, y, name = '', initialText = '') {
         el.classList.add('music-player-item');
         if (isMusicPlaying) el.classList.add('playing');
 
-        el.addEventListener('click', () => {
+        el.addEventListener('click', (e) => {
+            e.stopPropagation();
             if (state.clickPlaceMode) return;
             // 글로벌 재생 버튼 클릭과 동일한 동적 처리
             musicPlayBtn.click();
@@ -331,7 +333,8 @@ function placeItem(content, x, y, name = '', initialText = '') {
         el.classList.add('weather-window-item');
         if (state.isRainy) el.classList.add('rainy');
 
-        el.addEventListener('click', () => {
+        el.addEventListener('click', (e) => {
+            e.stopPropagation();
             if (state.clickPlaceMode) return;
             toggleRain();
         });
@@ -386,10 +389,21 @@ function placeItem(content, x, y, name = '', initialText = '') {
         };
     });
 
-    // 더블클릭 삭제
-    el.addEventListener('dblclick', () => removeItem(el));
+    // 더블클릭 (하트 애니메이션 리스너 위 341라인에 있음)
+    // dblclick 삭제 리스너 제거 (클릭 오동작 방지)
 
     deskSurface.appendChild(el);
+
+    // 내부 상태 데이터 등록 (중요: 메모장 등에서 데이터 연동을 위해 필요)
+    state.placedItems.push({
+        id,
+        content,
+        x: parseInt(el.style.left),
+        y: parseInt(el.style.top),
+        size,
+        text: initialText
+    });
+
     updateHint();
     updateCount();
     checkChallenge();
@@ -409,6 +423,9 @@ function removeItem(el) {
     el.classList.add('removing');
     hideToolkit();
     setTimeout(() => {
+        // 내부 데이터 삭제
+        state.placedItems = state.placedItems.filter(i => i.id !== el.id);
+
         el.remove();
         updateHint();
         updateCount();
@@ -764,8 +781,13 @@ function generateDiagnosticReport(itemsDOM) {
     };
     
     const profile = profiles[maxCat];
-    const themeMap = { 'sunset': '🌅 Sunset', 'night': '🌙 Night', 'forest': '🌿 Forest', 'ocean': '🌊 Ocean' };
-    const themeStr = themeMap[state.currentTheme] || '🎨 Auto';
+    const themeMap = { 
+        'lofi-dusk': '🌅 Lo-Fi Dusk', 
+        'night': '🌃 Retro Night', 
+        'forest': '🌿 Deep Forest', 
+        'city-pop': '📻 City Pop' 
+    };
+    const themeStr = themeMap[state.currentTheme] || '🎨 Custom';
     const dateStr = new Date().toISOString().split('T')[0];
     
     resultCard.innerHTML = `
@@ -1114,7 +1136,25 @@ gachaConfirmBtn.addEventListener('click', () => {
 
 // ── PHASE 6-B: 메모 에디터 로직 ───────────────────────
 function openNoteEditor(itemId) {
-    const itemData = state.placedItems.find(i => i.id === itemId);
+    // 1. 상태 데이터에서 찾기
+    let itemData = state.placedItems.find(i => i.id === itemId);
+    
+    // 2. 만약 상태 데이터에 없다면 (신규 생성 직후 등), DOM에서 직접 가져와서 데이터 생성
+    if (!itemData) {
+        const el = document.getElementById(itemId);
+        if (el) {
+            itemData = {
+                id: itemId,
+                content: el.dataset.content,
+                x: parseInt(el.style.left),
+                y: parseInt(el.style.top),
+                size: parseInt(el.dataset.size) || 72,
+                text: el.dataset.text || ''
+            };
+            state.placedItems.push(itemData);
+        }
+    }
+
     if (!itemData) return;
 
     currentEditingItem = itemId;
