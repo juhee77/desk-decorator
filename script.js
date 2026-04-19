@@ -7,7 +7,7 @@
 const state = {
     placedItems: [],      // { id, content, x, y, size }
     currentCat: 'study',
-    currentTheme: 'sunset',
+    currentTheme: 'lofi-dusk',
     selectedItem: null,   // DOM element
     dragging: null,       // { source: 'palette'|'desk', element, content, offsetX, offsetY }
     itemSeq: 0,
@@ -101,19 +101,33 @@ function applyTheme(theme, isManual = false) {
     if (isManual) manualThemeOverride = true;
     state.currentTheme = theme;
     document.body.setAttribute('data-theme', theme);
+    
+    // 버튼 활성화 상태 업데이트
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.theme === theme);
+    });
+
     saveToLocal();
 }
+
+// 테마 버튼 이벤트 리스너
+document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        applyTheme(btn.dataset.theme, true);
+        showToast(`${btn.textContent.split(' ')[1]} 테마로 변경되었습니다!`, 'info', 1500);
+    });
+});
 
 function syncThemeToTime() {
     if (manualThemeOverride) return;
     
     const hour = new Date().getHours();
-    let targetTheme = 'ocean'; // 기본값 (낮)
+    let targetTheme = 'lofi-dusk'; // 기본값 (낮/저녁)
     
-    if (hour >= 6 && hour < 16) {
-        targetTheme = 'ocean'; // 낮 (아침~오후) - 바다/숲 등 밝은 테마 사용
-    } else if (hour >= 16 && hour < 19) {
-        targetTheme = 'sunset'; // 노을
+    if (hour >= 6 && hour < 17) {
+        targetTheme = 'lofi-dusk'; // 낮/저녁 (차분한 감성)
+    } else if (hour >= 17 && hour < 20) {
+        targetTheme = 'city-pop'; // 노을/네온
     } else {
         targetTheme = 'night';  // 밤
     }
@@ -292,6 +306,12 @@ function placeItem(content, x, y, name = '', initialText = '') {
             if (state.clickPlaceMode) return;
             openNoteEditor(id);
         });
+
+        // 첫 메모 배치 가이드 (한 번만)
+        if (!localStorage.getItem('memo_guide_shown')) {
+            showToast('📝 메모 내용을 적으려면 책상 위의 메모를 클릭하세요!', 'info', 4000);
+            localStorage.setItem('memo_guide_shown', 'true');
+        }
     }
 
     // [Music Player] 클릭 이벤트 추가

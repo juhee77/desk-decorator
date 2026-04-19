@@ -1,23 +1,23 @@
 :root {
-    /* Sunset Theme (Default) */
-    --desk-bg: linear-gradient(160deg, #FFD6E8 0%, #FFA8D5 35%, #FF8FB1 65%, #E8B4F8 100%);
+    /* Lo-Fi Dusk Theme (New Default) */
+    --desk-bg: linear-gradient(160deg, #2c3e50 0%, #34495e 35%, #5d4157 70%, #a8caba 100%);
+    
+    /* Palette & UI Colors (Less Pink, More Muted/Premium) */
+    --primary-gradient: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 50%, #81ecec 100%);
+    --secondary-gradient: linear-gradient(135deg, #74b9ff 0%, #81ecec 100%);
 
-    /* Palette */
-    --primary-gradient: linear-gradient(135deg, #FFB7D5 0%, #C9A0DC 50%, #A8D8EA 100%);
-    --secondary-gradient: linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%);
+    --bg-body: #1e272e;
+    --bg-card: rgba(255, 255, 255, 0.95);
+    --text-primary: #2f3542;
+    --text-secondary: #57606f;
+    --accent-purple: #6c5ce7;
+    --accent-blue: #00d2d3;
+    --accent-orange: #ff9f43;
+    --accent-pink: #ef5777; /* Kept as a subtle accent */
 
-    --bg-body: linear-gradient(135deg, #ffeef8 0%, #e8d5f0 50%, #d5e8f8 100%);
-    --bg-card: rgba(255, 255, 255, 0.92);
-    --text-primary: #4a3a5e;
-    --text-secondary: #9B8AA4;
-    --accent-pink: #FFB7D5;
-    --accent-purple: #C9A0DC;
-    --accent-blue: #A8D8EA;
-    --accent-peach: #FFDAB9;
-
-    --shadow-sm: 0 2px 12px rgba(180, 100, 180, 0.1);
-    --shadow-md: 0 4px 20px rgba(180, 100, 180, 0.18);
-    --shadow-lg: 0 8px 40px rgba(180, 100, 180, 0.22);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.2);
 
     --border-radius: 20px;
     --border-radius-sm: 12px;
@@ -28,37 +28,31 @@
 /* ========================
    THEMES
 ======================== */
-body[data-theme="sunset"] {
-    --desk-bg: linear-gradient(160deg, #FFD6E8 0%, #FFA8D5 35%, #FF8FB1 65%, #E8B4F8 100%);
-    --bg-body: linear-gradient(135deg, #ffeef8 0%, #e8d5f0 50%, #d5e8f8 100%);
+body[data-theme="lofi-dusk"] {
+    --desk-bg: linear-gradient(160deg, #2c3e50 0%, #34495e 35%, #5d4157 70%, #a8caba 100%);
+    --bg-body: #1e272e;
 }
 
 body[data-theme="night"] {
-    --desk-bg: linear-gradient(160deg, #1a1a2e 0%, #16213e 40%, #0f3460 70%, #533483 100%);
-    --bg-body: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-    --bg-card: rgba(30, 30, 60, 0.92);
-    --text-primary: #e0d7f7;
-    --text-secondary: #9b8fc0;
-    --accent-pink: #bf5fff;
-    --accent-purple: #7b5ea7;
-    --shadow-md: 0 4px 20px rgba(100, 50, 200, 0.3);
-    --shadow-lg: 0 8px 40px rgba(100, 50, 200, 0.35);
+    --desk-bg: linear-gradient(160deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    --bg-body: #050505;
+    --bg-card: rgba(25, 25, 40, 0.95);
+    --text-primary: #d1d8e0;
+    --text-secondary: #778ca3;
+    --accent-purple: #9c88ff;
+}
+
+body[data-theme="city-pop"] {
+    --desk-bg: linear-gradient(160deg, #45aaf2 0%, #2d98da 35%, #eb3b5a 75%, #fa8231 100%);
+    --bg-body: #2d98da;
+    --primary-gradient: linear-gradient(135deg, #00d2d3 0%, #54a0ff 100%);
+    --bg-card: rgba(255, 255, 255, 0.95);
 }
 
 body[data-theme="forest"] {
-    --desk-bg: linear-gradient(160deg, #d4edda 0%, #a8d8a8 35%, #7bc67b 65%, #c8e6c9 100%);
-    --bg-body: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #dcedc8 100%);
-    --accent-pink: #81c784;
-    --accent-purple: #4caf50;
-    --shadow-md: 0 4px 20px rgba(50, 150, 80, 0.2);
-}
-
-body[data-theme="ocean"] {
-    --desk-bg: linear-gradient(160deg, #b2ebf2 0%, #80deea 35%, #4dd0e1 65%, #b3e5fc 100%);
-    --bg-body: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 50%, #e1f5fe 100%);
-    --accent-pink: #4dd0e1;
-    --accent-purple: #0097a7;
-    --shadow-md: 0 4px 20px rgba(0, 150, 200, 0.2);
+    --desk-bg: linear-gradient(160deg, #1e3799 0%, #3c6382 35%, #079992 70%);
+    --bg-body: #0c2461;
+    --primary-gradient: linear-gradient(135deg, #009432 0%, #006266 100%);
 }
 
 /* ========================
@@ -80,6 +74,20 @@ body {
     color: var(--text-primary);
     min-height: 100vh;
     transition: background 0.6s ease, color 0.4s ease;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Global Lo-Fi Noise Overlay */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.03;
+    background: url('https://grainy-gradients.vercel.app/noise.svg');
+    filter: contrast(150%) brightness(100%);
 }
 
 /* ========================
@@ -158,10 +166,11 @@ body {
 .title {
     font-family: 'Outfit', sans-serif;
     font-size: clamp(2rem, 5vw, 3.5rem);
-    font-weight: 800;
-    letter-spacing: 0.15em;
-    color: var(--text-primary);
+    font-weight: 700;
+    letter-spacing: -1px;
     margin-bottom: 0.2rem;
+    color: var(--accent-purple);
+    text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -180,6 +189,69 @@ body {
     letter-spacing: 0.05em;
     color: var(--text-secondary);
     font-weight: 400;
+    margin-bottom: 0.5rem;
+}
+
+.theme-selector {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1.2rem;
+}
+
+.theme-btn {
+    background: var(--bg-card);
+    border: 1.5px solid rgba(0,0,0,0.05);
+    padding: 0.45rem 0.9rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+.theme-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--accent-purple);
+}
+
+.theme-btn.active {
+    background: var(--accent-purple);
+    color: white;
+    border-color: var(--accent-purple);
+}
+
+/* ========================
+   PLACED ITEM IMPROVEMENTS
+======================== */
+.placed-item.is-note {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%236c5ce7' d='M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'/%3E%3C/svg%3E") 0 24, pointer;
+}
+
+.placed-item.is-note:hover::before {
+    content: "클릭해서 메모 쓰기";
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.85);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.placed-item:hover {
+    filter: brightness(1.05) drop-shadow(0 0 12px rgba(108, 92, 231, 0.4));
+    transform: scale(1.05);
 }
 
 /* ========================
