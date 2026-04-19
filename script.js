@@ -16,6 +16,7 @@ const state = {
     unlockedItems: [],    // 해금된 가챠 아이템 ID들
     lastGachaDate: null,  // 마지막 뽑기 날짜
     focusCoins: 0,        // 포모도로 타이머를 통해 획득한 코인
+    isRainy: false,       // 날씨 상태
     pets: []              // 현재 책상 위의 펫 요소들
 };
 
@@ -248,7 +249,7 @@ deskSurface.addEventListener('pointerdown', e => {
 });
 
 // ── 아이템 배치 ────────────────────────────────────
-function placeItem(content, x, y, name = '') {
+function placeItem(content, x, y, name = '', initialText = '') {
     const size = 72;
     const id = `item-${++state.itemSeq}`;
 
@@ -260,6 +261,7 @@ function placeItem(content, x, y, name = '') {
     el.style.setProperty('--item-size', `${size}px`);
     el.dataset.content = content;
     el.dataset.size    = size;
+    el.dataset.text    = initialText; // 데이터 속성에 텍스트 저장
     
     // 펫 여부 확인
     const isPet = Object.values(itemsConfig).flat().find(i => i.image === content)?.isPet;
@@ -280,10 +282,9 @@ function placeItem(content, x, y, name = '') {
         el.classList.add('is-note');
         const textDiv = document.createElement('div');
         textDiv.className = 'placed-item-text';
-        // 저장된 텍스트가 있으면 표시
-        const savedData = state.placedItems.find(i => i.id === id);
-        if (savedData && savedData.text) {
-            textDiv.textContent = savedData.text;
+        // 전달받은 텍스트가 있으면 표시
+        if (initialText) {
+            textDiv.textContent = initialText;
         }
         el.appendChild(textDiv);
 
@@ -302,6 +303,17 @@ function placeItem(content, x, y, name = '') {
             if (state.clickPlaceMode) return;
             // 글로벌 재생 버튼 클릭과 동일한 동적 처리
             musicPlayBtn.click();
+        });
+    }
+
+    // [Weather Window] 클릭 이벤트 추가
+    if (itemCfg?.isWeatherWindow) {
+        el.classList.add('weather-window-item');
+        if (state.isRainy) el.classList.add('rainy');
+
+        el.addEventListener('click', () => {
+            if (state.clickPlaceMode) return;
+            toggleRain();
         });
     }
 
@@ -523,7 +535,8 @@ function saveToLocal() {
         content: el.dataset.content,
         x: parseInt(el.style.left),
         y: parseInt(el.style.top),
-        size: parseInt(el.dataset.size) || 72
+        size: parseInt(el.dataset.size) || 72,
+        text: el.dataset.text || '' // 텍스트 필드 추가
     }));
 
     const data = {
@@ -547,7 +560,7 @@ function loadFromLocal() {
         if (data.theme) applyTheme(data.theme);
 
         (data.items || []).forEach(item => {
-            const el = placeItem(item.content, item.x + (item.size / 2), item.y + (item.size / 2));
+            const el = placeItem(item.content, item.x + (item.size / 2), item.y + (item.size / 2), '', item.text || '');
             el.dataset.size = item.size || 72;
             el.style.setProperty('--item-size', `${item.size || 72}px`);
             // 위치 직접 세팅 (placeItem이 size/2 offset을 더했으므로 재정의)
@@ -1099,6 +1112,7 @@ noteSaveBtn.addEventListener('click', () => {
 
     if (itemData && el) {
         itemData.text = text;
+        el.dataset.text = text; // 데이터 속성 동기화
         const textDiv = el.querySelector('.placed-item-text');
         if (textDiv) textDiv.textContent = text;
         
@@ -1115,6 +1129,29 @@ function closeNoteEditor() {
     noteEditorOverlay.classList.remove('active');
     currentEditingItem = null;
     noteInput.value = '';
+}
+
+// ── PHASE 6-D: 가상 창문 & 날씨 로직 ───────────────────────
+function toggleRain() {
+    state.isRainy = !state.isRainy;
+    
+    // UI 업데이트
+    document.body.classList.toggle('is-rainy', state.isRainy);
+    document.querySelectorAll('.weather-window-item').forEach(el => {
+        el.classList.toggle('rainy', state.isRainy);
+    });
+
+    // 오디오 자동화
+    if (state.isRainy) {
+        ambRainVol.value = 60;
+        audioRain.volume = 0.6;
+        if (audioRain.paused) audioRain.play().catch(e => console.log('Audio restricted', e));
+        showToast('비가 오기 시작하네요. 집중하기 좋은 시간이에요. 🌧️', 'info');
+    } else {
+        ambRainVol.value = 0;
+        audioRain.volume = 0;
+        showToast('비가 그쳤습니다. ☀️', 'info');
+    }
 }
 
 // ── PHASE 6: 포모도로 타이머 로직 ───────────────────────

@@ -1224,6 +1224,43 @@ body {
 }
 
 /* ========================
+   VIRTUAL WINDOW & WEATHER
+======================== */
+.placed-item.rainy .raindrops {
+    display: block !important;
+}
+
+.placed-item.rainy .drop {
+    animation: rainFall 0.8s linear infinite;
+}
+
+.drop.d2 { animation-delay: 0.2s; }
+.drop.d3 { animation-delay: 0.4s; }
+.drop.d4 { animation-delay: 0.1s; }
+
+@keyframes rainFall {
+    0% { transform: translateY(-5px); opacity: 0; }
+    50% { opacity: 0.6; }
+    100% { transform: translateY(15px); opacity: 0; }
+}
+
+/* Weather Overlay */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle, transparent 40%, rgba(0, 30, 60, 0.2) 100%);
+    pointer-events: none;
+    z-index: 500;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+body.is-rainy::after {
+    opacity: 1;
+}
+
+/* ========================
    DAILY CHALLENGE WIDGET
 ======================== */
 .challenge-widget {

@@ -170,6 +170,14 @@ const itemsConfig = {
             color: '#fd79a8'
         },
         {
+            id: 'window',
+            name: '가상 창문',
+            image: `./assets/svg/items/window.svg`,
+            type: 'url',
+            color: '#afb8d0',
+            isWeatherWindow: true
+        },
+        {
             id: 'star',
             name: '별',
             image: `${ICONIFY_BASE}/star.svg`,
