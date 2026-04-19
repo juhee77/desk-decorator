@@ -23,26 +23,9 @@
     <div class="container">
         <header class="header">
             <h1 class="title">
-                <span class="title-icon">🌸</span>
-                나만의 책상 꾸미기
+                <span class="title-logo">DESK STUDIO</span>
             </h1>
-            <p class="subtitle">감성 가득한 나만의 공간을 만들어보세요 ✨</p>
-
-            <!-- 테마 선택 -->
-            <div class="theme-selector">
-                <button class="theme-btn active" data-theme="sunset" id="themeSunset" title="노을">
-                    <span>🌅</span> 노을
-                </button>
-                <button class="theme-btn" data-theme="night" id="themeNight" title="야경">
-                    <span>🌙</span> 야경
-                </button>
-                <button class="theme-btn" data-theme="forest" id="themeForest" title="숲">
-                    <span>🌿</span> 숲
-                </button>
-                <button class="theme-btn" data-theme="ocean" id="themeOcean" title="바다">
-                    <span>🌊</span> 바다
-                </button>
-            </div>
+            <p class="subtitle">Design your own digital workspace.</p>
         </header>
 
         <div class="main-content">
@@ -79,6 +62,38 @@
                     <button class="cat-tab" data-cat="hobby">
                         <i class="fas fa-palette"></i><span>취미</span>
                     </button>
+                    <button class="cat-tab" data-cat="pets">
+                        <i class="fas fa-paw"></i><span>펫</span>
+                    </button>
+                    <button class="cat-tab" data-cat="memo">
+                        <i class="fas fa-sticky-note"></i><span>메모</span>
+                    </button>
+                    <button class="cat-tab" data-cat="collection">
+                        <i class="fas fa-gem"></i><span>수집</span>
+                    </button>
+                </div>
+
+                <!-- 가챠 위젯 -->
+                <div class="gacha-widget" id="gachaWidget">
+                    <div class="gacha-machine">
+                        <div class="gacha-glass">
+                            <div class="capsule c1"></div>
+                            <div class="capsule c2"></div>
+                            <div class="capsule c3"></div>
+                        </div>
+                        <div class="gacha-body">
+                            <button class="gacha-btn" id="gachaBtn">
+                                <span>PUSH</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="gacha-info">
+                        <strong>Daily Capsule</strong>
+                        <p id="gachaStatus">오늘의 캡슐을 열어보세요!</p>
+                        <div class="focus-coin-display">
+                            포커스 코인: <strong id="focusCoinCount">0</strong> 🍅
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 아이템 그리드 (JS로 렌더링) -->
@@ -183,8 +198,62 @@
                 </div>
             </div>
             <div id="ytPlayerWrap" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;"></div>
+            
+            <div class="ambient-mixer">
+                <div class="ambient-title">Ambient Mixer</div>
+                <div class="ambient-row">
+                    <span title="비 내리는 소리">🌧️</span>
+                    <input type="range" class="music-vol-slider ambient-slider" id="ambRainVol" min="0" max="100" value="0">
+                </div>
+                <div class="ambient-row">
+                    <span title="모닥불 타는 소리">🔥</span>
+                    <input type="range" class="music-vol-slider ambient-slider" id="ambFireVol" min="0" max="100" value="0">
+                </div>
+                <div class="ambient-row">
+                    <span title="타자기 소리">⌨️</span>
+                    <input type="range" class="music-vol-slider ambient-slider" id="ambKeyVol" min="0" max="100" value="0">
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- 📝 메모 에디터 모달 -->
+    <div class="note-editor-overlay" id="noteEditorOverlay">
+        <div class="note-editor">
+            <h3>할 일 적기 📝</h3>
+            <textarea id="noteInput" placeholder="오늘 할 일을 적어보세요... (최대 3줄)"></textarea>
+            <div class="note-editor-btns">
+                <button class="note-save-btn" id="noteSaveBtn">저장하기</button>
+                <button class="note-cancel-btn" id="noteCancelBtn">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🍅 포포도로 위젯 -->
+    <div class="timer-widget" id="timerWidget">
+        <button class="timer-fab" id="timerFab" title="Focus Timer">
+            <span class="timer-fab-icon" id="timerFabIcon">🍅</span>
+        </button>
+        <div class="timer-panel" id="timerPanel">
+            <div class="timer-panel-header">
+                <div class="timer-meta">
+                    <div class="timer-title">Focus Time</div>
+                    <div class="timer-sub">집중해서 코인을 모아보세요!</div>
+                </div>
+                <button class="timer-close-btn" id="timerCloseBtn"><i class="fas fa-chevron-down"></i></button>
+            </div>
+            <div class="timer-display" id="timerDisplay">25:00</div>
+            <div class="timer-controls-row">
+                <button class="timer-play-btn" id="timerPlayBtn"><i class="fas fa-play" id="timerPlayIcon"></i></button>
+                <button class="timer-reset-btn" id="timerResetBtn"><i class="fas fa-undo"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🎧 백색소음 오디오 소스 -->
+    <audio id="audioRain" loop crossorigin="anonymous" src="https://soundbible.com/mp3/Rain_Background-Mike_Koenig-1681385776.mp3"></audio>
+    <audio id="audioFire" loop crossorigin="anonymous" src="https://soundbible.com/mp3/Fire_burning-Glaneur_de_sons-1168192301.mp3"></audio>
+    <audio id="audioKey" loop crossorigin="anonymous" src="https://soundbible.com/mp3/Keyboard%20Typing-SoundBible.com-1453215951.mp3"></audio>
 
     <!-- 🔮 취향 분석 모달 -->
     <div class="modal-overlay" id="resultOverlay">
@@ -194,7 +263,22 @@
             <div class="analysis-loading" id="analysisLoading">
                 <div class="loading-text" id="loadingText"></div>
             </div>
-            <button class="result-save-btn" id="resultSaveBtn"><i class="fas fa-camera"></i> REPORT CAPTURE</button>
+            <button class="result-save-btn" id="resultSaveBtn"><i class="fas fa-camera"></i> 진단 결과 저장</button>
+        </div>
+    </div>
+
+    <!-- 🎁 가챠 결과 오버레이 -->
+    <div class="gacha-overlay" id="gachaOverlay">
+        <div class="gacha-result-capsule" id="gachaResultCapsule">
+            <div class="capsule-top"></div>
+            <div class="capsule-bottom"></div>
+            <div class="gacha-unlocked-item" id="gachaUnlockedItem"></div>
+        </div>
+        <div class="gacha-congrats">
+            <div class="unlocked-badge">NEW COLLECTION!</div>
+            <h2 id="unlockedItemName">반짝이는 다이아몬드</h2>
+            <p>축하합니다! 새로운 아이템이 컬렉션에 추가되었습니다.</p>
+            <button class="gacha-confirm-btn" id="gachaConfirmBtn">데스크로 돌아가기</button>
         </div>
     </div>
 

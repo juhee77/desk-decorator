@@ -12,7 +12,11 @@ const state = {
     dragging: null,       // { source: 'palette'|'desk', element, content, offsetX, offsetY }
     itemSeq: 0,
     clickPlaceMode: false, // 팔레트에서 클릭하면 책상 클릭 대기
-    hasAnalyzed: false
+    hasAnalyzed: false,
+    unlockedItems: [],    // 해금된 가챠 아이템 ID들
+    lastGachaDate: null,  // 마지막 뽑기 날짜
+    focusCoins: 0,        // 포모도로 타이머를 통해 획득한 코인
+    pets: []              // 현재 책상 위의 펫 요소들
 };
 
 // ── DOM (추가) ──────────────────────────────────
@@ -41,6 +45,23 @@ const musicPlayBtn   = document.getElementById('musicPlayBtn');
 const musicPlayIcon  = document.getElementById('musicPlayIcon');
 const musicVol       = document.getElementById('musicVol');
 const vinyl          = document.getElementById('vinyl');
+
+// Timer
+const timerFab       = document.getElementById('timerFab');
+const timerPanel     = document.getElementById('timerPanel');
+const timerCloseBtn  = document.getElementById('timerCloseBtn');
+const timerDisplay   = document.getElementById('timerDisplay');
+const timerPlayBtn   = document.getElementById('timerPlayBtn');
+const timerPlayIcon  = document.getElementById('timerPlayIcon');
+const timerResetBtn  = document.getElementById('timerResetBtn');
+const focusCoinCount = document.getElementById('focusCoinCount');
+
+// Note Editor
+const noteEditorOverlay = document.getElementById('noteEditorOverlay');
+const noteInput         = document.getElementById('noteInput');
+const noteSaveBtn      = document.getElementById('noteSaveBtn');
+const noteCancelBtn    = document.getElementById('noteCancelBtn');
+let currentEditingItem = null; // 현재 편집 중인 아이템 ID
 
 // ── DOM ──────────────────────────────────────────
 const deskSurface    = document.getElementById('deskSurface');
@@ -72,18 +93,37 @@ function showToast(message, type = 'info', duration = 2500) {
 }
 
 // ── 테마 ──────────────────────────────────────────
-function applyTheme(theme) {
+// ── 테마 & 실시간 연동 ─────────────────────────
+let manualThemeOverride = false;
+
+function applyTheme(theme, isManual = false) {
+    if (isManual) manualThemeOverride = true;
     state.currentTheme = theme;
     document.body.setAttribute('data-theme', theme);
-    document.querySelectorAll('.theme-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.theme === theme);
-    });
     saveToLocal();
 }
 
-document.querySelectorAll('.theme-btn').forEach(btn => {
-    btn.addEventListener('click', () => applyTheme(btn.dataset.theme));
-});
+function syncThemeToTime() {
+    if (manualThemeOverride) return;
+    
+    const hour = new Date().getHours();
+    let targetTheme = 'ocean'; // 기본값 (낮)
+    
+    if (hour >= 6 && hour < 16) {
+        targetTheme = 'ocean'; // 낮 (아침~오후) - 바다/숲 등 밝은 테마 사용
+    } else if (hour >= 16 && hour < 19) {
+        targetTheme = 'sunset'; // 노을
+    } else {
+        targetTheme = 'night';  // 밤
+    }
+    
+    if (state.currentTheme !== targetTheme) {
+        applyTheme(targetTheme, false);
+    }
+}
+
+// 1분마다 시간 체크하여 테마 변경
+setInterval(syncThemeToTime, 60000);
 
 // ── 카테고리 탭 ──────────────────────────────────
 function renderCategory(cat) {
@@ -97,16 +137,27 @@ function renderCategory(cat) {
 
     items.forEach(cfg => {
         const el = document.createElement('div');
-        el.className = 'item';
-        el.draggable = true;
+        const isLocked = cfg.isLocked && !state.unlockedItems.includes(cfg.id);
+        
+        el.className = `item ${isLocked ? 'locked' : ''}`;
+        el.draggable = !isLocked;
+        el.dataset.id      = cfg.id;
         el.dataset.content = cfg.image;
         el.dataset.name    = cfg.name;
+        el.dataset.isPet   = cfg.isPet || false;
+        
         el.innerHTML = `
             <div class="item-image-wrap">
                 <img src="${cfg.image}" alt="${cfg.name}" loading="lazy">
             </div>
             <span class="item-label">${cfg.name}</span>
         `;
+
+        if (isLocked) {
+            el.addEventListener('click', () => showToast('가챠를 통해 해금해야 하는 아이템입니다! 🔒', 'info'));
+            itemsGrid.appendChild(el);
+            return;
+        }
 
         // Drag start (palette → desk)
         el.addEventListener('dragstart', e => {
@@ -209,12 +260,62 @@ function placeItem(content, x, y, name = '') {
     el.style.setProperty('--item-size', `${size}px`);
     el.dataset.content = content;
     el.dataset.size    = size;
+    
+    // 펫 여부 확인
+    const isPet = Object.values(itemsConfig).flat().find(i => i.image === content)?.isPet;
+    if (isPet) {
+        el.classList.add('is-pet');
+        initPetBehavior(el);
+    }
 
     const img = document.createElement('img');
     img.src = content;
     img.alt = name || 'desk item';
     img.draggable = false;
     el.appendChild(img);
+
+    // [Memo] 텍스트 레이어 추가
+    const itemCfg = Object.values(itemsConfig).flat().find(i => i.image === content);
+    if (itemCfg?.isNote) {
+        el.classList.add('is-note');
+        const textDiv = document.createElement('div');
+        textDiv.className = 'placed-item-text';
+        // 저장된 텍스트가 있으면 표시
+        const savedData = state.placedItems.find(i => i.id === id);
+        if (savedData && savedData.text) {
+            textDiv.textContent = savedData.text;
+        }
+        el.appendChild(textDiv);
+
+        el.addEventListener('click', () => {
+            if (state.clickPlaceMode) return;
+            openNoteEditor(id);
+        });
+    }
+
+    // [Music Player] 클릭 이벤트 추가
+    if (itemCfg?.isMusicPlayer) {
+        el.classList.add('music-player-item');
+        if (isMusicPlaying) el.classList.add('playing');
+
+        el.addEventListener('click', () => {
+            if (state.clickPlaceMode) return;
+            // 글로벌 재생 버튼 클릭과 동일한 동적 처리
+            musicPlayBtn.click();
+        });
+    }
+
+    // 더블클릭 (좋아요 액션)
+    el.addEventListener('dblclick', (e) => {
+        if (state.clickPlaceMode) return;
+        spawnPetHeart(el, e.clientX, e.clientY);
+        
+        // 아이템이 살짝 떨리는 애니메이션 (선택적)
+        el.style.transform += ' rotate(-5deg) scale(1.1)';
+        setTimeout(() => {
+            el.style.transform = el.style.transform.replace(' rotate(-5deg) scale(1.1)', '');
+        }, 300);
+    });
 
     // 책상 위 드래그 (이동)
     el.addEventListener('pointerdown', e => {
@@ -526,7 +627,8 @@ analyzeBtn.addEventListener('click', () => {
     const loadingText = document.getElementById('loadingText');
     
     loadingScreen.classList.add('active');
-    resultCard.style.display = 'none';
+    resultCard.innerHTML = ''; // Keep the box visible so container doesn't shrink
+    resultCard.style.display = 'flex';
     
     // Reset and start typewriter effect
     loadingText.innerHTML = '>> SYSTEM BOOT...<br/>';
@@ -629,7 +731,8 @@ function generateDiagnosticReport(itemsDOM) {
     };
     
     const profile = profiles[maxCat];
-    const themeStr = document.querySelector('.theme-btn.active').textContent.trim();
+    const themeMap = { 'sunset': '🌅 Sunset', 'night': '🌙 Night', 'forest': '🌿 Forest', 'ocean': '🌊 Ocean' };
+    const themeStr = themeMap[state.currentTheme] || '🎨 Auto';
     const dateStr = new Date().toISOString().split('T')[0];
     
     resultCard.innerHTML = `
@@ -751,6 +854,13 @@ function onPlayerStateChange(event) {
         musicFab.classList.remove('playing');
         musicFabIcon.textContent = '🎵';
     }
+    updateMusicPlayerItemsUI();
+}
+
+function updateMusicPlayerItemsUI() {
+    document.querySelectorAll('.music-player-item').forEach(el => {
+        el.classList.toggle('playing', isMusicPlaying);
+    });
 }
 
 musicFab.addEventListener('click', () => {
@@ -825,6 +935,10 @@ window.addEventListener('resize', () => {
     // 기본 테마 적용
     document.body.setAttribute('data-theme', 'sunset');
 
+    // Time-Sync 테마 적용 (localStorage보다 우선할지 여부)
+    // 기본적으로 접속 시간에 맞는 테마를 강제 반영합니다.
+    syncThemeToTime();
+
     // 기본 카테고리 렌더
     renderCategory('study');
     
@@ -838,3 +952,415 @@ window.addEventListener('resize', () => {
     console.log('💾 배치된 아이템은 자동 저장됩니다.');
     console.log('⌨️  단축키: ⌘S(저장) | ⌘D(전체삭제) | ⌘R(랜덤) | Del(삭제) | +/-(크기)');
 })();
+
+// ── V3 Features: 백색소음 믹서 (Ambient Mixer) ────────────────
+const audioRain = document.getElementById('audioRain');
+const audioFire = document.getElementById('audioFire');
+const audioKey  = document.getElementById('audioKey');
+
+const ambRainVol = document.getElementById('ambRainVol');
+const ambFireVol = document.getElementById('ambFireVol');
+const ambKeyVol  = document.getElementById('ambKeyVol');
+
+function setupAmbientSlider(audioEl, sliderEl) {
+    if (!audioEl || !sliderEl) return;
+    sliderEl.addEventListener('input', (e) => {
+        const vol = e.target.value / 100;
+        audioEl.volume = vol;
+        if (vol > 0 && audioEl.paused) {
+            audioEl.play().catch(err => console.log('Audio Autoplay blocked:', err));
+        } else if (vol === 0 && !audioEl.paused) {
+            audioEl.pause();
+        }
+    });
+}
+
+setupAmbientSlider(audioRain, ambRainVol);
+setupAmbientSlider(audioFire, ambFireVol);
+setupAmbientSlider(audioKey, ambKeyVol);
+// Load additional Phase 4-B state
+function loadV4State() {
+    const unlocked = localStorage.getItem('unlockedItems');
+    if (unlocked) state.unlockedItems = JSON.parse(unlocked);
+    state.lastGachaDate = saved.lastGachaDate || null;
+    state.focusCoins = saved.focusCoins || 0;
+    
+    // UI 반영
+    updateGachaStatus();
+}
+
+// ── V4 Features: 가챠 시스템 ───────────────────────
+const gachaBtn = document.getElementById('gachaBtn');
+const gachaStatus = document.getElementById('gachaStatus');
+const gachaOverlay = document.getElementById('gachaOverlay');
+const gachaConfirmBtn = document.getElementById('gachaConfirmBtn');
+
+function updateGachaStatus() {
+    focusCoinCount.textContent = state.focusCoins;
+    const today = new Date().toISOString().split('T')[0];
+    
+    if (state.lastGachaDate !== today) {
+        gachaStatus.textContent = '오늘의 무료 캡슐이 준비되었습니다! (1/1)';
+        gachaBtn.style.opacity = '1';
+        gachaBtn.style.pointerEvents = 'auto';
+        gachaBtn.querySelector('span').textContent = 'FREE';
+    } else if (state.focusCoins > 0) {
+        gachaStatus.textContent = '코인을 1개 사용하여 캡슐을 열 수 있습니다.';
+        gachaBtn.style.opacity = '1';
+        gachaBtn.style.pointerEvents = 'auto';
+        gachaBtn.querySelector('span').textContent = 'USE 🍅';
+    } else {
+        gachaStatus.textContent = '무료 개봉을 완료했습니다. 내일 자정이나 타이머를 통해 코인을 얻어주세요!';
+        gachaBtn.style.opacity = '0.5';
+        gachaBtn.style.pointerEvents = 'none';
+        gachaBtn.querySelector('span').textContent = 'EMPTY';
+    }
+}
+
+gachaBtn.addEventListener('click', () => {
+    const today = new Date().toISOString().split('T')[0];
+    
+    // 조건 확인
+    if (state.lastGachaDate === today) {
+        if (state.focusCoins > 0) {
+            state.focusCoins--;
+            saveToLocal();
+        } else {
+            return;
+        }
+    } else {
+        state.lastGachaDate = today;
+    }
+
+    // 가챠 뽑기 로직
+    const lockable = itemsConfig.collection.filter(i => !state.unlockedItems.includes(i.id));
+    if (lockable.length === 0) {
+        showToast('모든 컬렉션 아이템을 수집하셨습니다! ✨', 'success');
+        return;
+    }
+
+    const winIdx = Math.floor(Math.random() * lockable.length);
+    const wonItem = lockable[winIdx];
+
+    // UI 애니메이션
+    gachaBtn.classList.add('spinning');
+    setTimeout(() => {
+        gachaBtn.classList.remove('spinning');
+        showGachaResult(wonItem);
+        
+        // 상태 저장
+        state.unlockedItems.push(wonItem.id);
+        state.lastGachaDate = today;
+        localStorage.setItem('unlockedItems', JSON.stringify(state.unlockedItems));
+        localStorage.setItem('lastGachaDate', today);
+        
+        updateGachaStatus();
+        if (state.currentCat === 'collection') renderCategory('collection');
+    }, 1200);
+});
+
+function showGachaResult(item) {
+    const unlockedItemImg = document.getElementById('gachaUnlockedItem');
+    const unlockedItemName = document.getElementById('unlockedItemName');
+    
+    unlockedItemImg.innerHTML = `<img src="${item.image}" alt="${item.name}">`;
+    unlockedItemName.textContent = item.name;
+    
+    gachaOverlay.classList.add('active');
+    setTimeout(() => {
+        gachaOverlay.classList.add('open');
+    }, 100);
+}
+
+gachaConfirmBtn.addEventListener('click', () => {
+    gachaOverlay.classList.remove('open');
+    setTimeout(() => {
+        gachaOverlay.classList.remove('active');
+    }, 500);
+});
+
+// ── PHASE 6-B: 메모 에디터 로직 ───────────────────────
+function openNoteEditor(itemId) {
+    const itemData = state.placedItems.find(i => i.id === itemId);
+    if (!itemData) return;
+
+    currentEditingItem = itemId;
+    noteInput.value = itemData.text || '';
+    noteEditorOverlay.classList.add('active');
+    noteInput.focus();
+}
+
+noteSaveBtn.addEventListener('click', () => {
+    if (!currentEditingItem) return;
+    
+    const text = noteInput.value.trim();
+    const itemData = state.placedItems.find(i => i.id === currentEditingItem);
+    const el = document.getElementById(currentEditingItem);
+
+    if (itemData && el) {
+        itemData.text = text;
+        const textDiv = el.querySelector('.placed-item-text');
+        if (textDiv) textDiv.textContent = text;
+        
+        saveToLocal();
+        showToast('메모가 저장되었습니다! ✨', 'success');
+    }
+
+    closeNoteEditor();
+});
+
+noteCancelBtn.addEventListener('click', closeNoteEditor);
+
+function closeNoteEditor() {
+    noteEditorOverlay.classList.remove('active');
+    currentEditingItem = null;
+    noteInput.value = '';
+}
+
+// ── PHASE 6: 포모도로 타이머 로직 ───────────────────────
+let timerInterval = null;
+let timerSeconds = 25 * 60; // 25분
+const TIMER_DEFAULT = 25 * 60;
+
+timerFab.addEventListener('click', () => {
+    timerPanel.classList.toggle('active');
+});
+timerCloseBtn.addEventListener('click', () => {
+    timerPanel.classList.remove('active');
+});
+
+function formatTime(sec) {
+    const m = Math.floor(sec / 60).toString().padStart(2, '0');
+    const s = (sec % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+}
+
+function updateTimerDisplay() {
+    timerDisplay.textContent = formatTime(timerSeconds);
+    // 탭 타이틀 업데이트
+    if (timerInterval) document.title = `[${formatTime(timerSeconds)}] Desk Studio`;
+    else document.title = `Desk Studio 🌸 나만의 공간`;
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    timerPlayIcon.className = 'fas fa-play';
+    timerPanel.classList.remove('running');
+    updateTimerDisplay();
+}
+
+timerPlayBtn.addEventListener('click', () => {
+    if (timerInterval) {
+        // 일시정지
+        stopTimer();
+    } else {
+        // 시작
+        timerPlayIcon.className = 'fas fa-pause';
+        timerPanel.classList.add('running');
+        timerInterval = setInterval(() => {
+            timerSeconds--;
+            updateTimerDisplay();
+            
+            if (timerSeconds <= 0) {
+                // 종료 및 보상 지급
+                stopTimer();
+                timerSeconds = TIMER_DEFAULT;
+                updateTimerDisplay();
+                
+                state.focusCoins++;
+                saveToLocal();
+                updateGachaStatus();
+                
+                showToast('🎉 집중 성공! 포커스 코인 1개를 획득했습니다!', 'success');
+                // 알림 효과음 (선택)
+                const ding = new Audio('https://soundbible.com/mp3/Glass_Ping-Go445-1207030150.mp3');
+                ding.volume = 0.5;
+                ding.play().catch(e=>console.log('Audio restricted', e));
+                
+                // 일일 챌린지 갱신용 (강제 1 추가)
+                if (state.dailyChallenge.progress < state.dailyChallenge.target) {
+                    state.dailyChallenge.progress++;
+                    saveDailyChallenge();
+                    updateChallengeUI();
+                }
+            }
+        }, 1000);
+    }
+});
+
+timerResetBtn.addEventListener('click', () => {
+    stopTimer();
+    timerSeconds = TIMER_DEFAULT;
+    updateTimerDisplay();
+});
+
+// 초기화
+updateTimerDisplay();
+
+// ── V4+ Features: 데스크 펫 시스템 (감정 & 먹기) ──────────────────
+function initPetBehavior(el) {
+    if (el.dataset.initialized) return;
+    el.dataset.initialized = "true";
+    state.pets.push(el);
+
+    // 펫 데이터 찾기
+    const petCfg = Object.values(itemsConfig).flat().find(i => i.image === el.dataset.content);
+    if (!petCfg) return;
+
+    // 말풍선 DOM 추가
+    const bubble = document.createElement('div');
+    bubble.className = 'pet-thought-bubble';
+    el.appendChild(bubble);
+
+    let currentMood = 'idle';
+    let isEating = false;
+
+    const setExpression = (mood) => {
+        if (!petCfg.expressions) return;
+        const img = el.querySelector('img');
+        const src = petCfg.expressions[mood] || petCfg.expressions.idle || petCfg.image;
+        if (img.src !== src) img.src = src;
+        currentMood = mood;
+    };
+
+    const showThought = (emoji, duration = 2000) => {
+        bubble.textContent = emoji;
+        bubble.classList.add('active');
+        setTimeout(() => bubble.classList.remove('active'), duration);
+    };
+
+    el.addEventListener('click', (e) => {
+        if (state.clickPlaceMode || isEating) return;
+        setExpression('happy');
+        spawnPetHeart(el, e.clientX, e.clientY);
+        showThought('❤️');
+        setTimeout(() => setExpression('idle'), 3000);
+    });
+
+    // 자율 행동 루프
+    const behaviorLoop = () => {
+        if (!document.body.contains(el)) return;
+        if (isEating) return; // 먹는 중엔 이동 안 함
+
+        const rand = Math.random();
+
+        // 1. 먹이 찾기 (주변 50px 이내)
+        const food = findNearbyFood(el);
+        if (food) {
+            startEating(el, food);
+            return;
+        }
+
+        // 2. 랜덤 행동
+        if (rand < 0.6) {
+            // 이동
+            const rect = deskSurface.getBoundingClientRect();
+            const size = parseInt(el.dataset.size || 72);
+            const newX = Math.random() * (rect.width - size);
+            const newY = Math.random() * (rect.height - size);
+            
+            const currentX = parseFloat(el.style.left);
+            el.style.transform = newX < currentX ? 'scaleX(-1)' : 'scaleX(1)';
+            el.style.left = `${newX}px`;
+            el.style.top = `${newY}px`;
+            
+            setExpression('idle');
+        } else if (rand < 0.8) {
+            // 생각하기 / 말풍선
+            const fav = petCfg.favorites[Math.floor(Math.random() * petCfg.favorites.length)];
+            showThought(fav);
+        } else {
+            // 낮잠 자기
+            setExpression('sleepy');
+            el.classList.add('sleeping');
+            setTimeout(() => {
+                el.classList.remove('sleeping');
+                setExpression('idle');
+            }, 6000);
+        }
+
+        setTimeout(behaviorLoop, 4000 + Math.random() * 4000);
+    };
+
+    const startEating = (pet, food) => {
+        isEating = true;
+        pet.classList.add('eating');
+        setExpression('happy');
+        showThought('😋');
+        
+        // 먹이 쪽으로 위치 미세 조정
+        pet.style.left = food.style.left;
+        pet.style.top = food.style.top;
+
+        food.classList.add('shrinking');
+        
+        setTimeout(() => {
+            pet.classList.remove('eating');
+            setExpression('happy');
+            showThought('✨');
+            
+            // 먹이 삭제
+            food.remove();
+            
+            // 전역 상태에서도 삭제
+            const foodId = food.id;
+            state.placedItems = state.placedItems.filter(i => i.id !== foodId);
+            updateStats();
+            saveToLocal();
+
+            setTimeout(() => {
+                isEating = false;
+                setExpression('idle');
+                behaviorLoop();
+            }, 2000);
+        }, 1500);
+    };
+
+    setTimeout(behaviorLoop, 2000);
+}
+
+function findNearbyFood(petEl) {
+    const px = parseFloat(petEl.style.left);
+    const py = parseFloat(petEl.style.top);
+    const allItems = document.querySelectorAll('.placed-item:not(.is-pet)');
+    
+    for (const item of allItems) {
+        const itemCfg = Object.values(itemsConfig).flat().find(i => i.image === item.dataset.content);
+        if (itemCfg && itemCfg.isFood) {
+            const ix = parseFloat(item.style.left);
+            const iy = parseFloat(item.style.top);
+            const dist = Math.sqrt(Math.pow(px - ix, 2) + Math.pow(py - iy, 2));
+            if (dist < 100) return item; // 감지 범위 100px
+        }
+    }
+    return null;
+}
+
+function spawnPetHeart(el, x, y) {
+    const heart = document.createElement('div');
+    heart.className = 'pet-heart';
+    heart.textContent = '❤️';
+    heart.style.left = `${x - 10}px`;
+    heart.style.top = `${y - 10}px`;
+    document.body.appendChild(heart);
+    
+    // 점프 모션
+    el.style.transform += ' translateY(-15px) scale(1.1)';
+    setTimeout(() => {
+        const currentScale = el.style.transform.includes('scaleX(-1)') ? 'scaleX(-1)' : 'scaleX(1)';
+        el.style.transform = currentScale;
+    }, 300);
+
+    setTimeout(() => heart.remove(), 1000);
+}
+
+// 기존 init 수정하여 V4 상태 로드 추가
+const originalInit = window.onload;
+window.onload = () => {
+    if (typeof originalInit === 'function') originalInit();
+    loadV4State();
+    
+    // 책상 위 기존 펫들 초기화
+    document.querySelectorAll('.placed-item.is-pet').forEach(initPetBehavior);
+};

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <g transform="translate(50, 50)">
+    <path d="M -30 -5 L -35 -35 L -10 -20 Z" fill="#eb8f6c"/>
+    <path d="M 30 -5 L 35 -35 L 10 -20 Z" fill="#eb8f6c"/>
+    <rect x="-35" y="-15" width="70" height="55" rx="25" fill="#ffa07a"/>
+    <circle cx="-15" cy="5" r="4" fill="#4a3a5e"/>
+    <circle cx="15" cy="5" r="4" fill="#4a3a5e"/>
+    <ellipse cx="-22" cy="15" rx="6" ry="3.5" fill="#ff7da7" opacity="0.4"/>
+    <ellipse cx="22" cy="15" rx="6" ry="3.5" fill="#ff7da7" opacity="0.4"/>
+    <polygon points="0,12 -3,9 3,9" fill="#ffb7d5"/>
+    <path d="M -5 16 Q 0 20 0 12 Q 0 20 5 16" fill="none" stroke="#4a3a5e" stroke-width="2" stroke-linecap="round"/>
+    <line x1="-30" y1="5" x2="-42" y2="2" stroke="#4a3a5e" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+    <line x1="-30" y1="12" x2="-42" y2="15" stroke="#4a3a5e" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+    <line x1="30" y1="5" x2="42" y2="2" stroke="#4a3a5e" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+    <line x1="30" y1="12" x2="42" y2="15" stroke="#4a3a5e" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+  </g>
+</svg>

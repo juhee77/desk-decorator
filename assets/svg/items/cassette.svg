@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect x="10" y="25" width="80" height="50" rx="4" fill="#4a3a5e" />
+  <rect x="15" y="30" width="70" height="40" rx="2" fill="#d1ccc0" />
+  <rect x="25" y="38" width="50" height="24" rx="2" fill="#f5f6fa" />
+  <circle class="cassette-wheel" cx="37" cy="50" r="8" fill="#2d3436" stroke="#4a3a5e" stroke-width="2" />
+  <circle class="cassette-wheel" cx="63" cy="50" r="8" fill="#2d3436" stroke="#4a3a5e" stroke-width="2" />
+  <rect x="37" y="49" width="1" height="3" fill="white" transform-origin="37 50" class="cassette-wheel-mark" />
+  <rect x="63" y="49" width="1" height="3" fill="white" transform-origin="63 50" class="cassette-wheel-mark" />
+  <path d="M 20 75 L 30 75 L 30 80 L 20 80 Z" fill="#84817a" />
+  <path d="M 70 75 L 80 75 L 80 80 Z" fill="#84817a" />
+</svg>

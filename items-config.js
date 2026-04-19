@@ -181,9 +181,10 @@ const itemsConfig = {
         {
             id: 'coffee',
             name: '커피',
-            image: `${ICONIFY_BASE}/hot-beverage.svg`,
+            image: `./assets/svg/items/coffee.svg`,
             type: 'url',
-            color: '#a0522d'
+            color: '#a0522d',
+            isFood: true
         },
         {
             id: 'tea',
@@ -204,35 +205,40 @@ const itemsConfig = {
             name: '음료',
             image: `${ICONIFY_BASE}/beverage-box.svg`,
             type: 'url',
-            color: '#ff9ff3'
+            color: '#ff9ff3',
+            isFood: true
         },
         {
             id: 'cookie',
             name: '쿠키',
             image: `${ICONIFY_BASE}/cookie.svg`,
             type: 'url',
-            color: '#d4a574'
+            color: '#d4a574',
+            isFood: true
         },
         {
             id: 'shortcake',
             name: '케이크',
             image: `${ICONIFY_BASE}/shortcake.svg`,
             type: 'url',
-            color: '#ffa8b8'
+            color: '#ffa8b8',
+            isFood: true
         },
         {
             id: 'donut',
             name: '도넛',
-            image: `${ICONIFY_BASE}/doughnut.svg`,
+            image: `./assets/svg/items/donut.svg`,
             type: 'url',
-            color: '#ff6348'
+            color: '#ff6348',
+            isFood: true
         },
         {
             id: 'candy',
             name: '사탕',
             image: `${ICONIFY_BASE}/candy.svg`,
             type: 'url',
-            color: '#ff6b9d'
+            color: '#ff6b9d',
+            isFood: true
         }
     ],
     hobby: [
@@ -249,6 +255,14 @@ const itemsConfig = {
             image: `${ICONIFY_BASE}/headphone.svg`,
             type: 'url',
             color: '#9d4edd'
+        },
+        {
+            id: 'cassette',
+            name: '빈티지 카세트',
+            image: `./assets/svg/items/cassette.svg`,
+            type: 'url',
+            color: '#4a3a5e',
+            isMusicPlayer: true
         },
         {
             id: 'game',
@@ -291,6 +305,168 @@ const itemsConfig = {
             image: `${ICONIFY_BASE}/globe-showing-asia-australia.svg`,
             type: 'url',
             color: '#74b9ff'
+        }
+    ],
+    pets: [
+        {
+            id: 'cat',
+            name: '치즈 고양이',
+            image: `./assets/svg/pets/cat-idle.svg`,
+            type: 'url',
+            color: '#ffa07a',
+            isPet: true,
+            favorites: ['🧶', '🐟', '🐾', '🥤'],
+            expressions: {
+                idle: `./assets/svg/pets/cat-idle.svg`,
+                happy: `./assets/svg/pets/cat-happy.svg`,
+                sleepy: `./assets/svg/pets/cat-sleepy.svg`
+            }
+        },
+        {
+            id: 'dog',
+            name: '퍼피',
+            image: `./assets/svg/pets/dog-idle.svg`,
+            type: 'url',
+            color: '#d4a574',
+            isPet: true,
+            favorites: ['🦴', '🎾', '🏃', '🚿'],
+            expressions: {
+                idle: `./assets/svg/pets/dog-idle.svg`,
+                happy: `./assets/svg/pets/dog-idle.svg`,
+                sleepy: `./assets/svg/pets/dog-idle.svg`
+            }
+        },
+        {
+            id: 'rabbit',
+            name: '토끼',
+            image: `./assets/svg/pets/rabbit-idle.svg`,
+            type: 'url',
+            color: '#f8c291',
+            isPet: true,
+            favorites: ['🥕', '🥬', '✨'],
+            expressions: {
+                idle: `./assets/svg/pets/rabbit-idle.svg`,
+                happy: `./assets/svg/pets/rabbit-idle.svg`,
+                sleepy: `./assets/svg/pets/rabbit-idle.svg`
+            }
+        },
+        {
+            id: 'parrot',
+            name: '앵무새',
+            image: `./assets/svg/pets/parrot-idle.svg`,
+            type: 'url',
+            color: '#4ecdc4',
+            isPet: true,
+            favorites: ['🥜', '🌈', '🎶'],
+            expressions: {
+                idle: `./assets/svg/pets/parrot-idle.svg`,
+                happy: `./assets/svg/pets/parrot-idle.svg`,
+                sleepy: `./assets/svg/pets/parrot-idle.svg`
+            }
+        },
+        {
+            id: 'bear',
+            name: '곰돌이',
+            image: `./assets/svg/pets/bear-idle.svg`,
+            type: 'url',
+            color: '#a0522d',
+            isPet: true,
+            favorites: ['🍯', '🍎', '🐟'],
+            expressions: {
+                idle: `./assets/svg/pets/bear-idle.svg`,
+                happy: `./assets/svg/pets/bear-idle.svg`,
+                sleepy: `./assets/svg/pets/bear-idle.svg`
+            }
+        },
+        {
+            id: 'penguin',
+            name: '펭귄',
+            image: `./assets/svg/pets/penguin-idle.svg`,
+            type: 'url',
+            color: '#74b9ff',
+            isPet: true,
+            favorites: ['🐟', '❄️', '🦑'],
+            expressions: {
+                idle: `./assets/svg/pets/penguin-idle.svg`,
+                happy: `./assets/svg/pets/penguin-idle.svg`,
+                sleepy: `./assets/svg/pets/penguin-idle.svg`
+            }
+        }
+    ],
+    memo: [
+        {
+            id: 'note-yellow',
+            name: '노랑 포스트잇',
+            image: './assets/svg/items/note-yellow.svg',
+            type: 'url',
+            color: '#fff9c4',
+            isNote: true
+        },
+        {
+            id: 'note-pink',
+            name: '핑크 포스트잇',
+            image: './assets/svg/items/note-pink.svg',
+            type: 'url',
+            color: '#f8bbd0',
+            isNote: true
+        },
+        {
+            id: 'note-green',
+            name: '연두 포스트잇',
+            image: './assets/svg/items/note-green.svg',
+            type: 'url',
+            color: '#c8e6c9',
+            isNote: true
+        }
+    ],
+    collection: [
+        {
+            id: 'diamond',
+            name: '다이아몬드',
+            image: `${ICONIFY_BASE}/gem-stone.svg`,
+            type: 'url',
+            color: '#74b9ff',
+            isLocked: true
+        },
+        {
+            id: 'trophy',
+            name: '황금 트로피',
+            image: `${ICONIFY_BASE}/trophy.svg`,
+            type: 'url',
+            color: '#ffd93d',
+            isLocked: true
+        },
+        {
+            id: 'crown',
+            name: '왕관',
+            image: `${ICONIFY_BASE}/crown.svg`,
+            type: 'url',
+            color: '#ffd93d',
+            isLocked: true
+        },
+        {
+            id: 'magic-wand',
+            name: '마법 지팡이',
+            image: `${ICONIFY_BASE}/magic-wand.svg`,
+            type: 'url',
+            color: '#9d4edd',
+            isLocked: true
+        },
+        {
+            id: 'rocket',
+            name: '우주선',
+            image: `${ICONIFY_BASE}/rocket.svg`,
+            type: 'url',
+            color: '#ff6b6b',
+            isLocked: true
+        },
+        {
+            id: 'unicorn',
+            name: '유니콘',
+            image: `${ICONIFY_BASE}/unicorn.svg`,
+            type: 'url',
+            color: '#ff9ff3',
+            isLocked: true
         }
     ]
 };

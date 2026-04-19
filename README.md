@@ -1,118 +1,51 @@
-# 🌸 나만의 책상 꾸미기 게임
+# 🌸 Desk Studio (나만의 데스크 & 집중 공간)
 
-일본 시티팝 감성의 감성적인 책상 꾸미기 게임입니다.
+Desk Studio는 단순히 책상을 꾸미는 게임을 넘어, **자신만의 감성적인 아날로그 책상을 세팅해 두고 잔잔한 로파이(Lo-Fi)와 앰비언트(백색소음) 사운드를 들으며 학업이나 업무에 집중할 수 있도록 돕는 '집중 파트너 플랫폼'**입니다. 완성된 나만의 완벽한 워크스페이스를 다른 사람들과 공유해 보세요!
 
-## 🎮 플레이하기
+## 🎧 핵심 기능 (Core Features)
 
-**👉 [지금 바로 플레이하기!](https://juhee77.github.io/desk-decorator/)**
+1. **감성적인 데스크테리어 (Deskterior)**
+   - 다양한 파스텔, 시티팝 감성의 오브제, 플랫 디자인 벡터 에셋(SVG)을 활용한 자유로운 배치
+   - 나만의 책상을 완성한 뒤 캡처하여 친구들이나 SNS에 공유
+2. **포커스 믹서 (Ambient Sound Mixer)**
+   - 빗소리, 모닥불 타는 소리, 타자기 소리, 로파이 배경 음악 등 환경음 볼륨을 개별로 조절해 나만의 집중용 '백색소음 기기'로 사용
+3. **인터랙티브 데스크 펫 (Interactive Pets)**
+   - 단순한 장식이 아닌, 사용자의 작업을 응원해 주고 함께 노는 펫(고양이, 강아지, 토끼 등)
+   - 먹이를 주거나 쓰다듬어 주며 소소한 리프레쉬 제공
+4. **시간 연동 오토 테마 (Time-Synced Theme)**
+   - 현실 시간과 연동되어 아침(바다), 저녁(노을), 밤(은하수)에 맞춰 책상 배경이 자동으로 변환
+5. **데일리 힐링 가챠 (Daily Gacha)**
+   - 매일 출석해 오늘의 캡슐을 열고 새로운 데스크 장식을 모아가는 재미 (포모도로 보상으로 활용 가능)
 
-[![Desk Decorator](https://img.shields.io/badge/Play-Desk%20Decorator-FF69B4?style=for-the-badge&logo=github)](https://juhee77.github.io/desk-decorator/)
+## 🎮 플레이 및 체험하기
+
+**👉 [지금 바로 집중 모드 켜기!](https://juhee77.github.io/desk-decorator/)**
+
+[![Desk Decorator](https://img.shields.io/badge/Play-Desk%20Studio-A29BFE?style=for-the-badge&logo=github)](https://juhee77.github.io/desk-decorator/)
 
 ---
 
-## ✨ 기능
+## ⌨️ 키보드 단축키 및 컨트롤
 
-- 드래그 앤 드롭으로 아이템 배치
-- 랜덤 배치 기능
-- 스크린샷 저장
-- 키보드 단축키 지원
+- **아이템 더블클릭:** 배치된 아이템을 삭제합니다.
+- **아이템 드래그 & 클릭 배치:** 상단 팔레트에서 아이템을 책상 위로 끌고와 원하는 위치에 배치하세요.
+- **`Cmd/Ctrl + S`:** 책상 스크린샷 저장 (친구들과 공유해 보세요!)
+- **`Cmd/Ctrl + D`:** 전체 지우기 (책상을 새롭게 정리합니다.)
 
-## 🎨 고퀄리티 이미지로 교체하는 방법
+## 🛠 기능 확장 및 커스터마이징 (개발)
 
-현재는 이모지를 사용하고 있지만, 실제 고퀄리티 PNG 이미지로 쉽게 교체할 수 있습니다.
-
-### 1단계: 이미지 준비
-
-`/images` 폴더를 만들고 아래 이름으로 PNG 이미지를 저장하세요:
-
-**학용품 (study)**
-- `laptop.png` - 노트북
-- `book.png` - 책
-- `notebook.png` - 노트
-- `pencil.png` - 연필
-- `pen.png` - 펜
-- `ruler.png` - 자
-
-**식물 & 장식 (plants)**
-- `plant1.png` - 새싹
-- `plant2.png` - 잎사귀
-- `cactus.png` - 선인장
-- `flower.png` - 꽃
-- `lamp.png` - 램프
-- `candle.png` - 양초
-
-**음료 & 간식 (drinks)**
-- `coffee.png` - 커피
-- `tea.png` - 차
-- `juice.png` - 주스
-- `cookie.png` - 쿠키
-- `cake.png` - 케이크
-- `donut.png` - 도넛
-
-**취미 & 기타 (hobby)**
-- `camera.png` - 카메라
-- `headphone.png` - 헤드폰
-- `game.png` - 게임
-- `art.png` - 미술
-- `clock.png` - 시계
-- `photo.png` - 사진
-
-### 2단계: items-config.js 수정
-
-`items-config.js` 파일에서 각 아이템의 설정을 변경하세요:
+본 프로젝트는 고품질의 플랫 SVG 및 Iconify 에셋을 적극 사용 중입니다. 새로운 펫이나, 자신이 좋아하는 간식을 `assets/svg/` 폴더 내에 Vector 그래픽으로 작성해 언제든 덧붙일 수 있습니다.
 
 ```javascript
+/* items-config.js 에서 쉽게 아이템 추가하기 */
 {
-    id: 'laptop',
-    name: '노트북',
-    image: './images/laptop.png',  // 이미지 경로로 변경
-    type: 'url'  // 'emoji'에서 'url'로 변경
+    id: 'my-favorite-item',
+    name: '내 최애 텀블러',
+    image: './assets/svg/items/tumbler.svg',
+    type: 'url'
 }
 ```
 
-### 추천 이미지 소스
-
-1. **Flaticon** (https://www.flaticon.com)
-   - 무료 PNG 아이콘
-   - 시티팝/파스텔 스타일 검색
-
-2. **Freepik** (https://www.freepik.com)
-   - 고퀄리티 일러스트
-   - "kawaii", "pastel", "city pop" 검색
-
-3. **Canva** (https://www.canva.com)
-   - 직접 디자인 가능
-   - 파스텔 톤 템플릿
-
-### 이미지 권장 사양
-
-- **크기**: 512x512px 또는 1024x1024px
-- **포맷**: PNG (투명 배경)
-- **스타일**: 파스텔 톤, 시티팝 감성
-- **배경**: 투명 또는 흰색
-
-## 🎮 사용법
-
-1. 왼쪽 팔레트에서 아이템을 드래그
-2. 책상 위에 드롭하여 배치
-3. 배치된 아이템을 드래그하여 위치 조정
-4. 더블클릭으로 개별 아이템 삭제
-
-## ⌨️ 키보드 단축키
-
-- `Cmd/Ctrl + S`: 스크린샷 저장
-- `Cmd/Ctrl + D`: 전체 삭제
-- `Cmd/Ctrl + R`: 랜덤 배치
-
-## 🎨 커스터마이징
-
-`style.css`의 `:root` 섹션에서 색상을 변경할 수 있습니다:
-
-```css
-:root {
-    --accent-pink: #FFB7D5;
-    --accent-purple: #C9A0DC;
-    --accent-blue: #A8D8EA;
-    /* ... */
-}
-```
+## 📜 라이선스 및 에셋 출처
+- 백색소음 및 배경 음악 출처: [SoundBible](https://soundbible.com) 등 무료 에셋
+- 프로젝트 내 SVG 에셋은 자체 제작 및 가공된 소스입니다.

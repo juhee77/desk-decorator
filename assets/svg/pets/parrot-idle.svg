@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <g transform="translate(50, 50)">
+    <path d="M -15 -20 C 30 -30 40 20 0 30 C -30 30 -25 -10 -15 -20" fill="#ff6b6b"/>
+    <path d="M -15 0 C -35 15 -20 25 -5 10 Z" fill="#4ecdc4"/>
+    <path d="M 5 0 C 25 15 10 25 -5 10 Z" fill="#4ecdc4"/>
+    <circle cx="8" cy="-5" r="8" fill="#ffffff"/>
+    <circle cx="10" cy="-5" r="3" fill="#2d3436"/>
+    <path d="M 15 -5 L 30 5 L 15 10 Z" fill="#feca57"/>
+    <path d="M -5 -25 L 0 -40 L 5 -25 Z" fill="#ff9ff3"/>
+  </g>
+</svg>
