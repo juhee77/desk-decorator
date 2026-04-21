@@ -17,7 +17,12 @@ const state = {
     lastGachaDate: null,  // 마지막 뽑기 날짜
     focusCoins: 0,        // 포모도로 타이머를 통해 획득한 코인
     isRainy: false,       // 날씨 상태
-    pets: []              // 현재 책상 위의 펫 요소들
+    pets: [],             // 현재 책상 위의 펫 요소들
+    dailyChallenge: {     // 오늘의 챌린지 상태 (추가)
+        progress: 0,
+        target: 5,
+        isCompleted: false
+    }
 };
 
 // ── DOM (추가) ──────────────────────────────────
@@ -576,9 +581,10 @@ function saveToLocal() {
         text: el.dataset.text || '' // 텍스트 필드 추가
     }));
 
-    const data = {
-        items,
-        theme: state.currentTheme,
+        focusCoins: state.focusCoins,
+        lastGachaDate: state.lastGachaDate,
+        unlockedItems: state.unlockedItems,
+        isRainy: state.isRainy,
         savedAt: new Date().toISOString()
     };
 
@@ -595,6 +601,13 @@ function loadFromLocal() {
         const data = JSON.parse(raw);
 
         if (data.theme) applyTheme(data.theme);
+        if (data.focusCoins !== undefined) state.focusCoins = data.focusCoins;
+        if (data.lastGachaDate) state.lastGachaDate = data.lastGachaDate;
+        if (data.unlockedItems) state.unlockedItems = data.unlockedItems;
+        if (data.isRainy !== undefined) {
+            state.isRainy = data.isRainy;
+            document.body.classList.toggle('is-rainy', state.isRainy);
+        }
 
         (data.items || []).forEach(item => {
             const el = placeItem(item.content, item.x + (item.size / 2), item.y + (item.size / 2), '', item.text || '');
@@ -880,9 +893,14 @@ window.onYouTubeIframeAPIReady = function() {
     ytPlayer = new YT.Player('ytPlayerWrap', {
         height: '1',
         width: '1',
-        // Lofi Girl Live Stream (or a stable playlist, using generic Lofi radio)
-        videoId: 'jfKfPfyJRdk', 
-        playerVars: { 'autoplay': 0, 'controls': 0 },
+        // Lofi Girl - lofi hip hop radio (Stable ID: 5qap5aO4i9A)
+        videoId: '5qap5aO4i9A', 
+        playerVars: { 
+            'autoplay': 0, 
+            'controls': 0,
+            'rel': 0,
+            'modestbranding': 1
+        },
         events: {
             'onReady': onPlayerReady,
             'onStateChange': onPlayerStateChange
@@ -1019,26 +1037,59 @@ const ambKeyVol  = document.getElementById('ambKeyVol');
 
 function setupAmbientSlider(audioEl, sliderEl) {
     if (!audioEl || !sliderEl) return;
+    
+    // 초기 볼륨 설정
+    audioEl.volume = sliderEl.value / 100;
+
     sliderEl.addEventListener('input', (e) => {
         const vol = e.target.value / 100;
         audioEl.volume = vol;
-        if (vol > 0 && audioEl.paused) {
-            audioEl.play().catch(err => console.log('Audio Autoplay blocked:', err));
-        } else if (vol === 0 && !audioEl.paused) {
+        
+        if (vol > 0) {
+            if (audioEl.paused) {
+                audioEl.play().catch(err => {
+                    console.log('Audio playback delayed or blocked:', err);
+                    // 브라우저 정책으로 인한 차단 시, 나중에 상호작용 시 재생되도록 플래그 설정 가능
+                });
+            }
+        } else {
             audioEl.pause();
         }
     });
 }
+
+// ── Audio Unlock Mechanism (브라우저 자동재생 정책 대응) ──
+function unlockAudio() {
+    const audios = [audioRain, audioFire, audioKey];
+    audios.forEach(audio => {
+        if (audio) {
+            // 아주 짧게 재생 후 일시정지하여 '잠금 해제'
+            audio.play().then(() => {
+                if (audio.volume === 0) audio.pause();
+            }).catch(() => {});
+        }
+    });
+
+    // 한 번 해제하면 이벤트 리스너 제거
+    document.removeEventListener('click', unlockAudio);
+    document.removeEventListener('pointerdown', unlockAudio);
+    console.log('🔊 Ambient Audio Unlocked');
+}
+
+document.addEventListener('click', unlockAudio);
+document.addEventListener('pointerdown', unlockAudio);
 
 setupAmbientSlider(audioRain, ambRainVol);
 setupAmbientSlider(audioFire, ambFireVol);
 setupAmbientSlider(audioKey, ambKeyVol);
 // Load additional Phase 4-B state
 function loadV4State() {
+    // 1. 개별 키로 저장된 유산 데이터 먼저 확인
     const unlocked = localStorage.getItem('unlockedItems');
-    if (unlocked) state.unlockedItems = JSON.parse(unlocked);
-    state.lastGachaDate = saved.lastGachaDate || null;
-    state.focusCoins = saved.focusCoins || 0;
+    if (unlocked && state.unlockedItems.length === 0) state.unlockedItems = JSON.parse(unlocked);
+    
+    if (!state.lastGachaDate) state.lastGachaDate = localStorage.getItem('lastGachaDate') || null;
+    if (state.focusCoins === 0) state.focusCoins = parseInt(localStorage.getItem('focusCoins')) || 0;
     
     // UI 반영
     updateGachaStatus();
@@ -1403,7 +1454,8 @@ function initPetBehavior(el) {
             // 전역 상태에서도 삭제
             const foodId = food.id;
             state.placedItems = state.placedItems.filter(i => i.id !== foodId);
-            updateStats();
+            updateCount();
+            checkChallenge();
             saveToLocal();
 
             setTimeout(() => {
