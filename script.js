@@ -937,8 +937,17 @@ function updateMusicPlayerItemsUI() {
 }
 
 musicFab.addEventListener('click', () => {
-    musicPanel.classList.toggle('active');
+    const isActive = musicPanel.classList.toggle('active');
+    musicFab.classList.toggle('active', isActive);
 });
+
+// YouTube API 로드 타임아웃 진단
+setTimeout(() => {
+    if (!ytPlayer || !ytPlayer.playVideo) {
+        console.warn('YouTube Player API load timeout');
+        // 사용자가 명시적으로 재생을 시도할 때 다시 알림을 주므로 여기서는 로그만 남김
+    }
+}, 5000);
 
 musicCloseBtn.addEventListener('click', () => {
     musicPanel.classList.remove('active');

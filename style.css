@@ -827,9 +827,11 @@ body::before {
     z-index: 2;
 }
 
-.music-fab:hover {
+.music-fab:hover,
+.music-fab.active {
     transform: scale(1.05);
     border-color: var(--accent-purple);
+    background: rgba(201, 160, 220, 0.1);
 }
 
 .music-fab.playing {
@@ -869,7 +871,6 @@ body::before {
     transform-origin: bottom left;
 }
 
-.music-widget:hover .music-panel,
 .music-panel.active {
     opacity: 1;
     transform: translateY(0) scale(1);
