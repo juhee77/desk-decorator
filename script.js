@@ -581,10 +581,14 @@ function saveToLocal() {
         text: el.dataset.text || '' // 텍스트 필드 추가
     }));
 
+    const data = {
+        items: items,
+        theme: state.currentTheme,
         focusCoins: state.focusCoins,
         lastGachaDate: state.lastGachaDate,
         unlockedItems: state.unlockedItems,
         isRainy: state.isRainy,
+        dailyChallenge: state.dailyChallenge, // 챌린지 상태 추가
         savedAt: new Date().toISOString()
     };
 
@@ -645,7 +649,22 @@ function initChallenge() {
     challengeTitle.textContent = todayChallenge.title;
     challengeDesc.textContent  = todayChallenge.desc;
     challengeEmoji.textContent = todayChallenge.emoji;
+    
+    // 로컬 저장이 있으면 덮어쓰기
+    const saved = localStorage.getItem('desk-challenge-v1');
+    if (saved) {
+        const parsed = JSON.parse(saved);
+        state.dailyChallenge.progress = parsed.progress || 0;
+        state.dailyChallenge.isCompleted = parsed.isCompleted || false;
+    }
+
     checkChallenge();
+}
+
+function saveDailyChallenge() {
+    localStorage.setItem('desk-challenge-v1', JSON.stringify(state.dailyChallenge));
+    // 메인 저장소에도 함께 저장
+    saveToLocal();
 }
 
 function countCat(itemsDOM, catName) {
