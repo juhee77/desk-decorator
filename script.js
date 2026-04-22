@@ -962,19 +962,8 @@ function updateMusicPlayerItemsUI() {
     });
 }
 
-musicFab.addEventListener('mouseenter', () => {
-    musicPanel.classList.add('active');
-});
-
-musicWidget.addEventListener('mouseleave', () => {
-    musicPanel.classList.remove('active');
-});
-
-// 모바일 클릭 토글 (호버 대신)
 musicFab.addEventListener('click', () => {
-    if (window.innerWidth <= 600) {
-        musicPanel.classList.toggle('active');
-    }
+    musicPanel.classList.toggle('active');
 });
 
 musicNextBtn.addEventListener('click', () => {
