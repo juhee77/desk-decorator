@@ -320,9 +320,9 @@ body::before {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    max-height: calc(100vh - 200px);
+    max-height: 600px; /* 고정형에 가까운 콤팩트한 높이로 조정 */
     position: sticky;
-    top: 1rem;
+    top: 2rem;
     transition: background 0.4s, border-color 0.4s;
 }
 
@@ -899,6 +899,15 @@ body::before {
 
 .vinyl.spinning {
     animation: spin 3s linear infinite;
+}
+
+.vinyl.loading {
+    animation: pulseFade 1.5s ease-in-out infinite;
+}
+
+@keyframes pulseFade {
+    0%, 100% { opacity: 0.4; transform: scale(0.95); }
+    50% { opacity: 1; transform: scale(1); }
 }
 
 .vinyl-inner {

@@ -67,6 +67,7 @@ const focusCoinCount = document.getElementById('focusCoinCount');
 // Palette Drawer
 const paletteClose = document.getElementById('paletteClose');
 const playlist = ['5qap5aO4i9A', 'DwO9R5wB-NM', 'jfKfPfyJRdk', 'S6pnt8h0s38'];
+const trackNames = ['Lofi Hip Hop Radio', 'Calm Lofi Beats', 'Study Lofi Radio', 'Chill Study Beats'];
 let currentTrackIdx = 0;
 
 // Note Editor
@@ -944,12 +945,18 @@ function onPlayerStateChange(event) {
         isMusicPlaying = true;
         musicPlayIcon.className = 'fas fa-pause';
         vinyl.classList.add('spinning');
+        vinyl.classList.remove('loading');
         musicFab.classList.add('playing');
         musicFabIcon.textContent = '🔊';
+        musicTrack.textContent = trackNames[currentTrackIdx];
+    } else if (event.data == YT.PlayerState.BUFFERING) {
+        musicTrack.textContent = "Loading...";
+        vinyl.classList.add('loading');
     } else {
         isMusicPlaying = false;
         musicPlayIcon.className = 'fas fa-play';
         vinyl.classList.remove('spinning');
+        vinyl.classList.remove('loading');
         musicFab.classList.remove('playing');
         musicFabIcon.textContent = '🎵';
     }
@@ -967,12 +974,17 @@ musicFab.addEventListener('click', () => {
 });
 
 musicNextBtn.addEventListener('click', () => {
+    if (!ytPlayer || !ytPlayer.loadVideoById) return showToast('음악을 불러오는 중입니다...', 'info');
+    
     currentTrackIdx = (currentTrackIdx + 1) % playlist.length;
-    if (ytPlayer && ytPlayer.loadVideoById) {
-        ytPlayer.loadVideoById(playlist[currentTrackIdx]);
-        ytPlayer.playVideo();
-    }
+    musicTrack.textContent = "Loading...";
+    vinyl.classList.add('loading');
+    ytPlayer.loadVideoById(playlist[currentTrackIdx]);
+    ytPlayer.playVideo();
 });
+
+// 초기화 시 첫 번째 곡 제목 설정
+musicTrack.textContent = trackNames[currentTrackIdx];
 
 // YouTube API 로드 타임아웃 진단
 setTimeout(() => {
