@@ -66,8 +66,8 @@ const focusCoinCount = document.getElementById('focusCoinCount');
 
 // Palette Drawer
 const paletteClose = document.getElementById('paletteClose');
-const playlist = ['5qap5aO4i9A', 'DwO9R5wB-NM', 'jfKfPfyJRdk', 'S6pnt8h0s38'];
-const trackNames = ['Lofi Hip Hop Radio', 'Calm Lofi Beats', 'Study Lofi Radio', 'Chill Study Beats'];
+const playlist = ['jfKfPfyJRdk', 'DwO9R5wB-NM', 'lV639S_AizA', '5yx6Gyau0zY'];
+const trackNames = ['Lofi Studio Beats', 'Calm Lofi Sleep', 'Chill Study Hits', 'Morning Lofi Hop'];
 let currentTrackIdx = 0;
 
 // Note Editor
@@ -930,9 +930,19 @@ window.onYouTubeIframeAPIReady = function() {
         },
         events: {
             'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
+            'onStateChange': onPlayerStateChange,
+            'onError': onPlayerError
         }
     });
+}
+
+function onPlayerError(event) {
+    console.error('YT Player Error:', event.data);
+    showToast('음악을 불러오는 중 오류가 발생했습니다. 다음 곡으로 넘어갑니다.', 'error');
+    // 오류 발생 시 자동으로 다음 곡 시도
+    setTimeout(() => {
+        musicNextBtn.click();
+    }, 1500);
 }
 
 function onPlayerReady(event) {
@@ -1004,6 +1014,8 @@ musicPlayBtn.addEventListener('click', () => {
     if (isMusicPlaying) {
         ytPlayer.pauseVideo();
     } else {
+        musicTrack.textContent = "Loading...";
+        vinyl.classList.add('loading');
         ytPlayer.playVideo();
     }
 });
