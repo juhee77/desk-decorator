@@ -43,6 +43,7 @@ const resultClose    = document.getElementById('resultClose');
 const resultSaveBtn  = document.getElementById('resultSaveBtn');
 
 // Music
+const musicWidget    = document.getElementById('musicWidget');
 const musicFab       = document.getElementById('musicFab');
 const musicFabIcon   = document.getElementById('musicFabIcon');
 const musicPanel     = document.getElementById('musicPanel');
@@ -50,6 +51,7 @@ const musicCloseBtn  = document.getElementById('musicCloseBtn');
 const musicPlayBtn   = document.getElementById('musicPlayBtn');
 const musicPlayIcon  = document.getElementById('musicPlayIcon');
 const musicVol       = document.getElementById('musicVol');
+const musicNextBtn    = document.getElementById('musicNextBtn');
 const vinyl          = document.getElementById('vinyl');
 
 // Timer
@@ -61,6 +63,11 @@ const timerPlayBtn   = document.getElementById('timerPlayBtn');
 const timerPlayIcon  = document.getElementById('timerPlayIcon');
 const timerResetBtn  = document.getElementById('timerResetBtn');
 const focusCoinCount = document.getElementById('focusCoinCount');
+
+// Palette Drawer
+const paletteClose = document.getElementById('paletteClose');
+const playlist = ['5qap5aO4i9A', 'DwO9R5wB-NM', 'jfKfPfyJRdk', 'S6pnt8h0s38'];
+let currentTrackIdx = 0;
 
 // Note Editor
 const noteEditorOverlay = document.getElementById('noteEditorOverlay');
@@ -955,9 +962,27 @@ function updateMusicPlayerItemsUI() {
     });
 }
 
+musicFab.addEventListener('mouseenter', () => {
+    musicPanel.classList.add('active');
+});
+
+musicWidget.addEventListener('mouseleave', () => {
+    musicPanel.classList.remove('active');
+});
+
+// 모바일 클릭 토글 (호버 대신)
 musicFab.addEventListener('click', () => {
-    const isActive = musicPanel.classList.toggle('active');
-    musicFab.classList.toggle('active', isActive);
+    if (window.innerWidth <= 600) {
+        musicPanel.classList.toggle('active');
+    }
+});
+
+musicNextBtn.addEventListener('click', () => {
+    currentTrackIdx = (currentTrackIdx + 1) % playlist.length;
+    if (ytPlayer && ytPlayer.loadVideoById) {
+        ytPlayer.loadVideoById(playlist[currentTrackIdx]);
+        ytPlayer.playVideo();
+    }
 });
 
 // YouTube API 로드 타임아웃 진단
@@ -995,9 +1020,16 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.add('active');
 
         const tab = btn.dataset.tab;
-        document.getElementById('palettePanel').classList.toggle('active', tab === 'palette');
-        document.getElementById('deskPanel').classList.toggle('active', tab === 'desk');
+        if (tab === 'palette') {
+            document.getElementById('palettePanel').classList.add('active');
+        } else {
+            document.getElementById('palettePanel').classList.remove('active');
+        }
     });
+});
+
+paletteClose.addEventListener('click', () => {
+    document.getElementById('palettePanel').classList.remove('active');
 });
 
 // ── 키보드 단축키 ─────────────────────────────────
@@ -1367,8 +1399,22 @@ timerPlayBtn.addEventListener('click', () => {
 
 timerResetBtn.addEventListener('click', () => {
     stopTimer();
-    timerSeconds = TIMER_DEFAULT;
+    timerSeconds = state.timerSetting || TIMER_DEFAULT;
     updateTimerDisplay();
+});
+
+document.querySelectorAll('.time-set-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.time-set-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const mins = parseInt(btn.dataset.time);
+        state.timerSetting = mins * 60;
+        
+        stopTimer();
+        timerSeconds = state.timerSetting;
+        updateTimerDisplay();
+    });
 });
 
 // 초기화

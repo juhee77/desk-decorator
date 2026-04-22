@@ -51,6 +51,7 @@
             <aside class="palette" id="palettePanel">
                 <h2 class="palette-title">
                     <i class="fas fa-magic"></i> 아이템 팔레트
+                    <button class="mobile-drawer-close" id="paletteClose"><i class="fas fa-times"></i></button>
                 </h2>
 
                 <!-- 카테고리 탭 -->
@@ -204,6 +205,7 @@
                     <i class="fas fa-volume-up" style="font-size:.75rem;opacity:.6"></i>
                     <input type="range" class="music-vol-slider" id="musicVol" min="0" max="100" value="60">
                 </div>
+                <button class="music-next-btn" id="musicNextBtn" title="다음 곡"><i class="fas fa-step-forward"></i></button>
             </div>
             <div id="ytPlayerWrap" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;"></div>
             
@@ -250,10 +252,21 @@
                 </div>
                 <button class="timer-close-btn" id="timerCloseBtn"><i class="fas fa-chevron-down"></i></button>
             </div>
-            <div class="timer-display" id="timerDisplay">25:00</div>
-            <div class="timer-controls-row">
-                <button class="timer-play-btn" id="timerPlayBtn"><i class="fas fa-play" id="timerPlayIcon"></i></button>
-                <button class="timer-reset-btn" id="timerResetBtn"><i class="fas fa-undo"></i></button>
+            <div class="timer-display-row">
+                <div class="timer-time" id="timerDisplay">25:00</div>
+                <div class="timer-controls">
+                    <button class="timer-btn" id="timerPlayBtn"><i class="fas fa-play" id="timerPlayIcon"></i></button>
+                    <button class="timer-btn" id="timerResetBtn"><i class="fas fa-undo"></i></button>
+                </div>
+            </div>
+            
+            <div class="timer-setting">
+                <div class="timer-set-title">집중 시간 (분)</div>
+                <div class="timer-set-btns">
+                    <button class="time-set-btn" data-time="15">15</button>
+                    <button class="time-set-btn active" data-time="25">25</button>
+                    <button class="time-set-btn" data-time="50">50</button>
+                </div>
             </div>
         </div>
     </div>
