@@ -66,7 +66,7 @@ const focusCoinCount = document.getElementById('focusCoinCount');
 
 // Palette Drawer
 const paletteClose = document.getElementById('paletteClose');
-const playlist = ['jfKfPfyJRdk', 'DwO9R5wB-NM', 'lV639S_AizA', '5yx6Gyau0zY'];
+const playlist = ['sElzxRbpeHs', 'uLZIPaF__L0', 'a5sdsbGKz8U', '5t10mu8yWpI'];
 const trackNames = ['Lofi Studio Beats', 'Calm Lofi Sleep', 'Chill Study Hits', 'Morning Lofi Hop'];
 let currentTrackIdx = 0;
 
@@ -920,8 +920,7 @@ window.onYouTubeIframeAPIReady = function() {
     ytPlayer = new YT.Player('ytPlayerWrap', {
         height: '1',
         width: '1',
-        // Lofi Girl - lofi hip hop radio (Stable ID: 5qap5aO4i9A)
-        videoId: '5qap5aO4i9A', 
+        videoId: playlist[currentTrackIdx], 
         playerVars: { 
             'autoplay': 0, 
             'controls': 0,
